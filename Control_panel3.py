@@ -1,4 +1,4 @@
-##Need to ditch the load INV button and add delete WO button.
+####Need to ditch the load INV button and add delete WO button.
 from PyQt5 import QtCore, QtGui, QtWidgets,Qt
 import lic
 import Store_ManagerV09
