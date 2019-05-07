@@ -68,36 +68,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.actionClear_DIFA_cables.triggered.connect(self.clearDIFA_cables)
         self.scrap.triggered.connect(self.scrap_cable)
         
-####    def contextMenuEvent(self, event):
-####        menu = QtWidgets.QMenu(self)
-####        add_wo=menu.addAction("Add to WO",self.add2WO)
-####        action = menu.exec_(QtGui.QCursor.pos())
-##    def add2WO(self):
-##        if self.WO.get_status()=='Unbooked':
-##            pn=''
-##            i=self.store_viewer.currentRow()
-##            sn=self.store_viewer.item(i,3)
-##            sn=sn.text()
-##            data=self.sohar.DH[sn].copy()
-##            if sn!='None':
-##                if sn in self.sohar.DH:
-##                    data=self.sohar.DH[sn].copy()
-##                elif sn in self.sohar.cables:
-##                    data=self.sohar.cables[sn].copy()
-##                self.WO.add_item(self.sohar,data)
-##            else:
-##                pn=self.store_viewer.item(i,1)
-##                pn=pn.text()
-##                data=self.sohar.consumables[pn].copy()
-##                self.WO.add_item(self.sohar,data)
-##        else:
-##            msg=QtWidgets.QMessageBox()
-##            msg.setIcon(QtWidgets.QMessageBox.Critical)
-##            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
-##            msg.setWindowTitle("Error")
-##            msg.setText("You cannot use this method if wororder is already sent or booked.")
-##            msg.exec_()
-
     def scrap_cable(self):
         form=scrapping()
         form.exec_()
