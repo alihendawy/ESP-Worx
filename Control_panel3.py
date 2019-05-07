@@ -4,8 +4,7 @@ import lic
 import Store_ManagerV09
 import os
 import sys
-import openpyxl
-import Main
+
 import wo_creator
 import repair_form
 import validation
