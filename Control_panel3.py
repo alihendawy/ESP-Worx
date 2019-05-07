@@ -33,8 +33,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
     def __init__(self,parent=None):
         QtWidgets.QMainWindow.__init__(self,parent)
         self.setupUi(self)
-        
-##        self.store_viewer.customContextMenuRequested.connect(self.contextMenuEvent)
+   
         self.status=self.statusBar()
         self.status.showMessage("Load Workorder")
         self.load_inv()
