@@ -106,6 +106,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 self.sohar.used_cables[sn]=self.sohar.difa_cables[sn].copy()
                 del(self.sohar.difa_cables[sn])
                 self.tabView()
+				return
         else:
             pass
     def cable_return(self):##mark2
@@ -133,7 +134,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 print('Im gone.')
                 self.sohar.return_cable(cable,enc,date,Base,well)
                 print('Never Know what hit em!')
-            self.tabView()       
+            self.tabView() 
+			return
             
     def clearDIFA(self):
         difaForm=Clearing_difa(self.sohar)
@@ -151,6 +153,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             msg.setWindowTitle("Success")
             msg.setText("Equipment cleared from DIFA.")
             msg.exec_()
+			return
         else:
             pass
         
@@ -165,6 +168,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             msg.setWindowTitle("Success")
             msg.setText("Orders updated successfully.")
             msg.exec_()
+			return
     def wo_load(self):
 
         wellsList=wells_list(self.sohar.get_wos())
