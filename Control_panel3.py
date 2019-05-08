@@ -584,7 +584,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             
         if r==QtWidgets.QMessageBox.Yes:
             flag=self.WO.book_set(self.sohar)
-            print('booked')
             if flag=='Not Available':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -743,7 +742,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             
                 elif addition.id_input.text() in self.sohar.cables:
                     data=self.sohar.cables[addition.id_input.text()].copy()
-                    data[4]=addition.spinBox.value()
+                    data.append(addition.id_input.text())
                     flag=self.WO.add_item(self.sohar,data,addition.date_input.text())
                     self.load_histories()
                     self.tabView()
