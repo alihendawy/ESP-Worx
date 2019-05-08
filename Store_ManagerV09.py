@@ -1,3 +1,7 @@
+##Add and remove items are done but still not working properly.
+##size varialble in cable encode is acting up.
+##Need to grind these two methods. A lot of bug potential.
+
 import configparser as cp
 import openpyxl
 import datetime
@@ -55,6 +59,7 @@ def cable_decode(sn,data):
 
 def cable_encode(data):
     result=[]
+    size=''
     x=[]
     c1={('592966','New'):[1,0,0,0],('592966','Used'):[0,1,0,0],
         ('00870393','New'):[0,0,1,0],('00870393','Used'):[0,0,0,1],
@@ -1325,7 +1330,10 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                         elif len(data)==6:
                                 a=cable_decode(data[-1],data[:-1])
                                 for i in range(len(a)):
+                                        if i==0:
+                                                self.cables[data[-1]]=a[i]
                                         self.cables[data[-1]+'/'+str(i+1)]=a[i]
+
                         
                 else:
                         return 'Item not in store.'
@@ -1341,7 +1349,7 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 
                         elif len(data)==5:
                                 if q<data[4]:
-                                        return 'Insufficient cons'
+                                        return 'Item not in store.'
 
                                 if data[1] in self.consumables: ##Check if item is already in WO
                                         self.consumables[data[1]][4]+=data[4] ## increment qty      
@@ -1354,7 +1362,6 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                         if i==0:
                                                 self.cables[data[-1]]=a[i]
                                         self.cables[data[-1]+'/'+str(i+1)]=a[i]
-
 
                         self.book_set(sohar)
                 else:
@@ -1371,7 +1378,7 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 sohar.shistory.append(data2)
                         elif len(data)==5:
                                 if q<data[4]:
-                                        return 'Insufficient cons'
+                                        return 'Item not in store.'
                                 sohar.consumables[data[1]][4]-=data[4]
                                 if data[1] in self.consumables: ##Check if item is already in WO
                                         self.consumables[data[1]][4]+=data[4] ## increment qty      
@@ -1388,8 +1395,6 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 for r in a:
                                         sohar.shistory.append(r)
 
-                                
-                
         sohar.clear_ZQ()
         sohar.save() ##save sohar store      
         self.save()
@@ -1402,12 +1407,10 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         It then checks to see if WO is Booked then it removes this item from sohar bookings attribute
         If WO was sent it acts as if the item is returned to sohart and adds an entry in sohar history with
         datein supplied in input arguments. If user does not specify the date it will be left blank.'''
-        import openpyxl
+        TD={}
         if self.get_status()=='Unbooked':##Check the WO status. Return False if it is Unbooked.
-                if len(data)==7 and data[0][:3]=='Cab':
-                        del(self.cables[data[3]])
                 
-                elif len(data)==7 and data[0][:3]!='Cab':
+                if len(data)==7 and data[0][:3]!='Cab':
                         del(self.DH[data[3]])
                 
                 elif len(data)==5:
@@ -1415,72 +1418,43 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 del(self.consumables[data[1]])
                         else:
                                 self.consumables[data[1]][4]-=data[4]
+                elif len(data)==7 and data[0][:3]=='Cab':
+                        for k in self.cables:
+                                if data[3] in k:
+                                        pass
+                                else:
+                                        TD[k]=self.cables[k].copy()
+                        self.cables=TD
                 self.save()
                 return
-        if len(data)==7:
-                s,q=sohar.find_item(data[3],'SN')
-                if s:
-##                        print('Item already in Sohar')
-                        return 'Item already in Sohar'
-        
-        
                 
-        if len(data)==7: ##Check if item is in WO.
-                if data[3] not in self.DH and data[3] not in self.cables:
-##                        print('Item not in '+self.get_name())
+                
+        if len(data)==7 and data[0][:3]!='Cab': ##Check if item is in WO.
+                if data[3] not in self.DH:
                         return 'Item not in '
                 
         elif len(data)==5:
                 if data[1] not in self.consumables:
-##                        print('Item not in '+self.get_name())
                         return 'Item not in '
+        elif len(data)==7 and data[0][:3]=='Cab':
+                if data[3] not in self.cables:
+                        return 'Item not in '
+                        
         ##deduct from WO object 
-        if len(data)==7 and data[0][:3]=='Cab':
-                del(self.cables[data[3]])
-                sohar.cables[data[3]]=data ##Add item to sohar
-        elif len(data)==7 and data[0][:3]!='Cab':
-                del(self.DH[data[3]])
-                sohar.DH[data[3]]=data ##Add item to sohar
-        elif len(data)==5:
-                if data[4]==self.consumables[data[1]][4]:
+        
+        if self.get_status()=='Booked':
+                self.unbook_set(sohar)
+                if len(data)==7 and data[0][:3]!='Cab':
+                        del(self.DH[data[3]])
+                elif len(data)==5:
                         del(self.consumables[data[1]])
-                else:
-                        self.consumables[data[1]][4]-=data[4]
-                        
-                if data[1] not in sohar.consumables:
-                        sohar.consumables[data[1]]=data ##Add item to sohar
-                else:
-                        sohar.consumables[data[1]][4]+=data[4]
-        else:
-##                print('Invalid data.')
-                return 'Invalid data.'
-        
-        
-        if len(data)==7:       
-                if self.get_status()=='Booked': ##if WO is Booked, remove item from sohar.bookings
-                        for item in sohar.bookings:
-                                if data[3]==item[3]:
-                                        sohar.bookings.remove(item)
-                                        break
-                elif self.get_status()=='Sent': ##if WO is sent, add item to sohar history using datein
-                        data2=data.copy()
-                        data2[5]=datein
-                        data2.extend([None,self.get_base(),self.get_name()])
-                        sohar.shistory.append(data2)
-                        
-        elif len(data)==5:
-                if self.get_status()=='Booked': ##if WO is Booked, remove item from sohar.bookings
-                        for item in sohar.bookings:
-                                if data[1]==item[1] and data[4]==item[4]:
-                                        sohar.bookings.remove(item)
-                                        break
-                                elif data[1]==item[1] and data[4]!=item[4]:
-                                        item[4]-=data[4]
-                                        break
-                elif self.get_status()=='Sent': ##if WO is sent, add item to sohar history without datein
-                        data2=data.copy()
-                        data2.extend([None,None,None,self.get_base(),self.get_name()])
-                        sohar.shistory.append(data2)
-
-        sohar.save() ##save sohar store
-        self.save()
+                elif len(data)==7 and data[0][:3]=='Cab':
+                        for k in self.cables:
+                                if data[3] in k:
+                                        pass
+                                else:
+                                        TD[k]=self.cables[k].copy()
+                        self.cables=TD
+                self.book_set(sohar)
+        if self.get_status=='Sent':
+                return 'Item already sent.'

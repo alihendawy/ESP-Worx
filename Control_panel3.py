@@ -635,6 +635,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
+                    elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                        
                             
                 elif subtraction.id_input.text() in self.WO.cables:
                     data=self.WO.cables[subtraction.id_input.text()].copy()
@@ -665,6 +673,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
+                    elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                        
                 else:
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
@@ -702,6 +718,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                     msgBox.exec_()
+                elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
             else:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
