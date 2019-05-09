@@ -339,7 +339,6 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         above operations to be carried out on copies.'''
         ##check WO availability
         s,a=WO.is_avail(self)
-        print('is availed')
         if s:
         ## Yes: Loop over each item in WO dicts and subtract it from sohar dicts
                 for k in WO.DH:
@@ -1332,7 +1331,8 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 for i in range(len(a)):
                                         if i==0:
                                                 self.cables[data[-1]]=a[i]
-                                        self.cables[data[-1]+'/'+str(i+1)]=a[i]
+                                        else:
+                                                self.cables[data[-1]+'/'+str(i+1)]=a[i]
 
                         
                 else:
@@ -1361,7 +1361,8 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                 for i in range(len(a)):
                                         if i==0:
                                                 self.cables[data[-1]]=a[i]
-                                        self.cables[data[-1]+'/'+str(i+1)]=a[i]
+                                        else:
+                                                self.cables[data[-1]+'/'+str(i+1)]=a[i]
 
                         self.book_set(sohar)
                 else:
@@ -1393,6 +1394,7 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                                         self.cables[data[-1]+'/'+str(i+1)]=a[i]
                                 del(sohar.cables[data[-1]])
                                 for r in a:
+                                        r.extend([dateout,self.get_base(),self.get_name()])
                                         sohar.shistory.append(r)
 
         sohar.clear_ZQ()
