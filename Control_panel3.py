@@ -39,7 +39,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.save_action.triggered.connect(self.save_progress) ##OK
         self.saveas_action.triggered.connect(self.backup_store) ##OK
         self.st_selector.currentTextChanged.connect(self.tabView) ##OK Action for selecting from drop down menu
-        self.load_store.clicked.connect(self.foo) ##Action for clicking load_store Button
+    
         self.open_store.triggered.connect(self.foo)
         self.load_wo.clicked.connect(self.wo_load) ## OK Action for clicking Load WO Button
         self.open_WO.triggered.connect(self.wo_load) ##OK
@@ -1009,27 +1009,60 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             pass
         
     def search_by(self,IDtype,ID,view):
-        VD1={'Sohar Downhole equipment':self.sohar.DH,'Sohar Cables':self.sohar.cables,
-            'Sohar Consumables':self.sohar.consumables,
+        VD1={'Sohar Downhole equipment':self.sohar.DH,
+            'Sohar Consumables':self.sohar.consumables,'Repair History':self.sohar.rhistory,
             'Sohar Used equipment':self.sohar.used, 'Sohar DIFA equipment':self.sohar.difa}
         
-        VD2={'Sohar History':self.sohar.shistory,'Repair History':self.sohar.rhistory,'Cable History':self.sohar.chistory,
-            'Booked Sets':self.sohar.bookings}
-
+        VD2={'Sohar History':self.sohar.shistory,'Booked Sets':self.sohar.bookings}
+            
+        VD3={'Sohar Cables':self.sohar.cables,'Sohar Used Cables':self.sohar.used_cables,
+        'Sohar DIFA Cables':self.sohar.difa_cables,'Cable History':self.sohar.chistory }
+        
         IDD={'Description':0,'Part Number':1,'1C Code':2, 'Serial Number':3}
         data=[]
         if view in VD1:
-            for k in VD1[view]:
-                if ID.lower() in str(VD1[view][k][IDD[IDtype]]).lower():
-                    data.append(VD1[view][k].copy())
-                else:
-                    pass
+            if view != 'Repair History':
+                for k in VD1[view]:
+                    if ID.lower() in str(VD1[view][k][IDD[IDtype]]).lower():
+                        data.append(VD1[view][k].copy())
+                    else:
+                        pass
+            else:
+                for k in VD1[view]:
+                    if ID.lower() in str(VD1[view][k][0][IDD[IDtype]]).lower():
+                        data.extend(VD1[view][k].copy())
+                    else:
+                        pass
+                    
         elif view in VD2:
             for L in VD2[view]:
                 if ID.lower() in str(L[IDD[IDtype]]).lower():
                     data.append(L.copy())
                 else:
                     pass
+        elif view in VD3:
+            if IDtype!='Serial Number':
+                msg=QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowTitle("Warning")
+                msg.setText("Search not allowed, you can only search by SN in this view.")
+                msg.exec_()
+                return []
+            else:
+                if view!='Cable History':
+                    for k in VD3[view]:
+                        if ID.lower() in k:
+                            a=[k]+VD3[view][k].copy()
+                            data.append(a)
+                else:
+                    for L in VD3[view]:
+                        if ID.lower() in str(L[0]).lower():
+                            data.append(L.copy())
+                        
+                        
+                
+            
         elif view=='Minimum Store Levels':
             if IDtype=='1C Code' or IDtype=='Serial Number':
                 msg=QtWidgets.QMessageBox()
@@ -1052,6 +1085,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     L=[self.sohar.pn2desc_map()[k],k,self.sohar.av_pn_map()[k],self.sohar.minStore_map[k],a,b,c]
                     if ID.lower() in str(L[IDD[IDtype]]).lower():
                         data.append(L)
+        
     
         return data
 
@@ -1066,13 +1100,15 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.tabView()
             return
         data=self.search_by(a,b,c)
-        tabchk1={'Sohar Downhole equipment','Sohar Cables','Spare Parts'}
+        tabchk1={'Sohar Cables','Sohar Used Cables'}
         tabchk2={'Sohar Used equipment','Booked Sets','Sohar DIFA equipment'}
         
         self.store_viewer.clear()
         self.store_viewer.setRowCount(len(data))
-        if self.st_selector.currentText() in tabchk1:
+        if self.st_selector.currentText() =='Sohar Downhole equipment':
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition'])
+        elif self.st_selector.currentText() in tabchk1:
+            self.store_viewer.setHorizontalHeaderLabels(['Reel no','Galv New','Galv Used','SS New','SS Used','Size'])
         elif self.st_selector.currentText() in tabchk2:
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well'])
         elif self.st_selector.currentText() == 'Sohar Consumables':
@@ -1084,10 +1120,12 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In',
                                                          'Condition','Repair date'])
         elif self.st_selector.currentText() =='Cable History':
-            self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Old Quantity','New Quantity',
-                                                         'Delta','From Reel','To Reel'])
+            self.store_viewer.setHorizontalHeaderLabels(['Reel Number','Galv New','Galv Used','SS New','SS Used','Size','Update','Arm/Cond',
+                                                         'Well','Operation','Date'])
         elif self.st_selector.currentText() =='Minimum Store Levels':
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','Av Quantity','Min Store required','Intransit order','Intransit QTY','ETA'])
+        elif self.st_selector.currentText() == 'Sohar DIFA Cables':
+            self.store_viewer.setHorizontalHeaderLabels(['Reel no','Galv New','Galv Used','SS New','SS Used','Size','Base','Well'])
         j=0
         if len(data)==0:
             return
@@ -1131,9 +1169,9 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.DH[r][i]))) ## Copy list items to table row
                     j+=1
                 
-                self.store_viewer.resizeColumnToContents(0)
-                self.store_viewer.resizeColumnToContents(1)
-                self.store_viewer.resizeColumnToContents(2)
+                for i in range(len(header)):
+                    self.store_viewer.resizeColumnToContents(i)
+                
 
                         
             elif self.st_selector.currentText()=='Sohar Cables': ## Sohar cables is selected
@@ -1232,8 +1270,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.consumables[r][i]))) ## Copy list items to table row
                     j+=1
-                
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(con_header)):
+                    self.store_viewer.resizeColumnToContents(i)
 
 
             
@@ -1255,7 +1293,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(s_header)):
+                    self.store_viewer.resizeColumnToContents(i)
 
 
             elif self.st_selector.currentText()=='Repair History': ## Repair history is selected
@@ -1299,7 +1338,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1
                 
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(b_header)):
+                    self.store_viewer.resizeColumnToContents(i)
             
                         
             elif self.st_selector.currentText()=='Sohar Used equipment': ## Sohar Used Equipment is selected
@@ -1319,8 +1359,9 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         self.store_viewer.setItem(j,i, item)
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.used[r][i]))) ## copy list items to table row
                     j+=1 ## increment col number
-                
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(b_header)):
+                    self.store_viewer.resizeColumnToContents(i)
+                    
             elif self.st_selector.currentText()=='Sohar DIFA equipment': ##Min store
                 difa_header=['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well']
                 self.store_viewer.setRowCount(len(self.sohar.difa))
@@ -1345,9 +1386,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 self.store_viewer.setRowCount(len(self.sohar.minStore_map))
                 self.store_viewer.setColumnCount(len(min_header))
                 self.store_viewer.setHorizontalHeaderLabels(min_header)
-                
-               
-                
+
                 j=0
                 for k in self.sohar.minStore_map :
                     

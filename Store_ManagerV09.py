@@ -1058,7 +1058,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
     def validate(self,pn):
         '''For a given PN (string), the method compares the incoming qty for this PN with the qty of the available+used+booked+sent
         It attempts to validate whether the available + consumed is equal the incoming or not.'''
-            
+        history=0    
         try:
                 av=self.av_pn_map()[pn]
         except:
@@ -1075,7 +1075,13 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 used=self.used_pn_map()[pn]
         except:
                 used=0
-        history=self.search_pn(pn)
+        for k in self.lekh:
+                if pn in self.lekh[k]:
+                        history+=1
+        for k in self.nimr:
+                if pn in self.nimr[k]:
+                        history+=1
+        
         
         if inc==av+used+booked+history:
 ##                print('Valid')
