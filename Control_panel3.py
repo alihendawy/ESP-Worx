@@ -413,7 +413,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.sohar.return_item(data,date,Base)
             self.tabView()               
 
-    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):##findme2
+    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):
         filename=QtWidgets.QFileDialog.getSaveFileName(QtWidgets.QMainWindow(),'Save Transfer Note')
         f=filename[0]
         if f.endswith('.xlsx'):

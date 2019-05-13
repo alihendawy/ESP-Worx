@@ -368,7 +368,8 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         for k in WO.cables:
                 sn=WO.cables[k][3]
                 c.append(WO.cables[k])
-        self.cables[sn]=cable_encode(c)
+        if len(WO.cables)>0:
+                self.cables[sn]=cable_encode(c)
 ##                if '/' in k:
 ##                        continue
 ##                if True not in self.find_item(k,'SN'):##check to see if each item is not in sohar cables dict
@@ -482,7 +483,8 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 for k in WO.cables:
                         c.append(WO.cables[k])
                         sn=WO.cables[k][3]
-                self.lekh[sn]=cable_encode(c)
+                if len(WO.cables)>0:
+                        self.lekh[sn]=cable_encode(c)
         elif WO.get_base()=='Nimr':
                 
                 for k in WO.DH:
@@ -490,7 +492,8 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 for k in WO.cables:
                         c.append(WO.cables[k])
                         sn=WO.cables[k][3]
-                self.nimr[sn]=cable_encode(c)
+                if len(WO.cables)>0: 
+                        self.nimr[sn]=cable_encode(c)
         
     def Move_set(self,WO,dateout=''): ##DONE
         '''If WO.bookng is false, Subtracts WO from sohar copy.Copy WO to sohar
@@ -1445,15 +1448,10 @@ class WO(Store):##Need standalone function to get WO files from folder uses
 
 if __name__=='__main__':
         
-##        data=[['Pump, ESP B 538-1900 70 HSG 79 STG CP CT TA MTSC', '10016185', '1C13', 'E161236679', 1, 'KK', 'New'],
-##              [2000, 0, 0, 0, '4','370271']]
-##              
         s=Store('sohar','config.ini')
-        s.generate_report('exported.xlsx')
-##        w=WO('AlI1','config.ini')
-##        for d in data:
-##                a=w.add_item(s,d,'today')
-##        for d in data:
-##        a=w.del_item(s,['Cable, SL-450 (E-Lead) Flat #4/1 AWG, G 5kV', '592966', '1C code', '370271', 2000, '', 'New'],'now')
+        w=WO('TN3','config.ini')
+##        w.unbook_set(s)
+        s.Move_set(w,'')
+
         
         
