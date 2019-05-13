@@ -120,16 +120,11 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 data=[int(form.return_view.item(i,1).text()),int(form.return_view.item(i,2).text()),
                 int(form.return_view.item(i,3).text()),int(form.return_view.item(i,4).text()),
                 form.return_view.item(i,5).text()]
-                print(data)
                 well=form.return_view.item(i,6).text()
                 enc={sn:data}
-                print(enc)
                 cable=Store_ManagerV09.cable_decode(sn,data)
-                print(cable)
-               
-                print('Im gone.')
+                
                 self.sohar.return_cable(cable,enc,date,Base,well)
-                print('Never Know what hit em!')
             self.tabView() 
             
     def clearDIFA(self):
@@ -642,6 +637,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
                         msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
                         
                             
                 elif subtraction.id_input.text() in self.WO.cables:
@@ -679,6 +681,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
                         
                 else:
@@ -725,6 +734,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
                         msgBox.exec_()
+                elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
             else:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
@@ -762,6 +778,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
                         msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
+                        
                             
                 elif addition.id_input.text() in self.sohar.cables:
                     data=self.sohar.cables[addition.id_input.text()].copy()
@@ -782,6 +806,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
+                        msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
                 else:
                     msgBox=QtWidgets.QMessageBox()
@@ -810,6 +841,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
+                        msgBox.exec_()
+                elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
             else:
                 
@@ -1710,8 +1748,17 @@ class Returning_cable(QtWidgets.QDialog,Return_cable.Ui_Dialog):
             self.check.append(sn)
             
         sn2=QtWidgets.QTableWidgetItem(sn)
+        z=QtWidgets.QTableWidgetItem(str(0))
+        z2=QtWidgets.QTableWidgetItem(str(0))
+        z3=QtWidgets.QTableWidgetItem(str(0))
+        z4=QtWidgets.QTableWidgetItem(str(0))
         self.return_view.insertRow(self.return_view.rowCount())
+        
         self.return_view.setItem(self.return_view.rowCount()-1,0,sn2)
+        self.return_view.setItem(self.return_view.rowCount()-1,1,z)
+        self.return_view.setItem(self.return_view.rowCount()-1,2,z2)
+        self.return_view.setItem(self.return_view.rowCount()-1,3,z3)
+        self.return_view.setItem(self.return_view.rowCount()-1,4,z4)
         for i in range(self.return_view.rowCount()):
             self.return_view.resizeColumnToContents(i) 
     def rem2return(self):

@@ -839,11 +839,13 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         wb.create_sheet('Cables',1)
         wb.create_sheet('Consumables',2)
         wb.create_sheet('Used Equipment',3)
-        wb.create_sheet('Booked Sets',4)
-        wb.create_sheet('Sohar History',5)
-        wb.create_sheet('Repair History',6)
-        wb.create_sheet('Cable History',7)
-        wb.create_sheet('DIFA',8)
+        wb.create_sheet('Used cables',4)
+        wb.create_sheet('Booked Sets',5)
+        wb.create_sheet('Sohar History',6)
+        wb.create_sheet('Repair History',7)
+        wb.create_sheet('Cable History',8)
+        wb.create_sheet('DIFA equipment',9)
+        wb.create_sheet('DIFA cables',10)
 
 
         ws=wb['Downhole Equipment']
@@ -877,14 +879,10 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         for i in cols1:
                                 ws[i+str(ws.max_row)]=self.DH[k][cols1.index(i)]
         ws=wb['Cables']
-        ws.append(header)
+        ws.append(['Reel no','Galv New','Galv Used','SS New','SS Used','Size'])
         for k in self.cables: ##  Needto add all types of downhole equipment
-                if 'SS' in self.cables[k][0]:
-                        ws['A'+str(ws.max_row+1)]='SS'
-                else:
-                        ws['A'+str(ws.max_row+1)]='Galv'
-                        
-                for i in cols1:
+                ws['A'+str(ws.max_row+1)]=k
+                for i in cols1[:5]:
                         ws[i+str(ws.max_row)]=self.cables[k][cols1.index(i)]
         ws=wb['Consumables']
         ws.append(['Type','Description','Part Number','1C Code','Serial Number','Quantity'])
@@ -916,13 +914,13 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         
                 elif self.consumables[k][0][:4]=='Gask':
                         ws['A'+str(ws.max_row+1)]='Gasket'
-                        for i in cols1[:2]:
-                                ws[i+str(ws.max_row)]=self.consumables[k][cols1[:3].index(i)]
+                        for i in cols1[:5]:
+                                ws[i+str(ws.max_row)]=self.consumables[k][cols1[:5].index(i)]
                         
                 else:
                         ws['A'+str(ws.max_row+1)]='Consumables'
-                        for i in cols1[:2]:
-                                ws[i+str(ws.max_row)]=self.consumables[k][cols1[:3].index(i)]
+                        for i in cols1[:5]:
+                                ws[i+str(ws.max_row)]=self.consumables[k][cols1[:5].index(i)]
 ##                        ws['D'+str(ws.max_row)]=self.consumables[k][-1]
        
 
@@ -930,11 +928,24 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         ws.append(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well'])
         for k in self.used:
                 ws.append(self.used[k])
+        ws=wb['Used cables']
+        ws.append(['Reel no','Galv New','Galv Used','SS New','SS Used','Size'])
+        for k in self.used_cables: ##  Needto add all types of downhole equipment
+                ws['A'+str(ws.max_row+1)]=k
+                for i in cols1[:5]:
+                        ws[i+str(ws.max_row)]=self.cables[k][cols1.index(i)]
 
-        ws=wb['DIFA']
+        ws=wb['DIFA equipment']
         ws.append(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well'])
         for k in self.difa:
                 ws.append(self.difa[k])
+
+        ws=wb['DIFA cables']
+        ws.append(['Reel no','Galv New','Galv Used','SS New','SS Used','Size','Base','Well'])
+        for k in self.difa_cables: ##  Needto add all types of downhole equipment
+                ws['A'+str(ws.max_row+1)]=k
+                for i in cols1:
+                        ws[i+str(ws.max_row)]=self.difa_cables[k][cols1.index(i)]
         
 
         ws=wb['Booked Sets']
@@ -949,17 +960,19 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
 
         ws=wb['Repair History']
         ws.append(['Description','Part Number','1C Code','Serial number','Quantity','Date In','Condition','Repair Date'])
-        for row in self.rhistory:
-                ws.append(row)
+        for k in self.rhistory:
+                for L in self.rhistory[k]:
+                        ws.append(L)
 
         ws=wb['Cable History']
-        ws.append(['Description','Part Number','1C Code','Serial number','Old QTY','New QTY','Delta','From Reel','To Reel'])
+        ws.append(['Reel no','Galv New','Galv Used','SS New','SS Used','Size','Update','Arm/Cond','Well','Operation','Date'])
         for row in self.chistory:
                 ws.append(row)
         
                 
                 
-        for s in ['Downhole Equipment', 'Cables','Consumables', 'Used Equipment','Booked Sets','Cable History','Sohar History','Repair History','DIFA']:
+        for s in ['Downhole Equipment', 'Cables','Consumables', 'Used Equipment','Booked Sets','Cable History','Sohar History','Repair History','DIFA equipment',
+                  'DIFA cables','Used cables']:
                 ws=wb[s]
                 bd = openpyxl.styles.Side(style='thick', color="000000")
                 bd2 = openpyxl.styles.Side(style='thin', color="000000")
@@ -976,18 +989,22 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                                 c.border=openpyxl.styles.Border(left=bd2,right=bd2,top=bd2,bottom=bd2)
                                 c.alignment=openpyxl.styles.Alignment(horizontal='center',vertical='center')
                 ## cell dimensions
-                if ws.title=='Spare Parts':
+                if ws.title in['Cables','Used cables','DIFA cables','Cable History']:
                         ws.row_dimensions[1].height=30
-                        ws.column_dimensions['A'].width=65
-                        ws.column_dimensions['B'].width=15
-                        ws.column_dimensions['C'].width=20
-                        ws.column_dimensions['D'].width=10
-                        ws.column_dimensions['E'].width=11
-                        ws.column_dimensions['F'].width=10
-                        ws.column_dimensions['G'].width=11
+                        ws.column_dimensions['A'].width=13
+                        ws.column_dimensions['B'].width=13
+                        ws.column_dimensions['C'].width=13
+                        ws.column_dimensions['D'].width=13
+                        ws.column_dimensions['E'].width=13
+                        ws.column_dimensions['F'].width=13
+                        ws.column_dimensions['G'].width=13
+                        ws.column_dimensions['H'].width=13
+                        ws.column_dimensions['I'].width=13
+                        ws.column_dimensions['J'].width=13
+                        ws.column_dimensions['K'].width=13
                         ws.freeze_panes = 'A2'
                         
-                elif ws.title in {'Used Equipment','DIFA','Booked Sets','Cable History','Sohar History','Repair History'}:
+                elif ws.title in {'Used Equipment','DIFA equipment','Booked Sets','Sohar History','Repair History'}:
                         ws.row_dimensions[1].height=30
                         ws.column_dimensions['A'].width=65
                         ws.column_dimensions['B'].width=15
@@ -996,7 +1013,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         ws.column_dimensions['E'].width=11
                         ws.column_dimensions['F'].width=13
                         ws.column_dimensions['G'].width=11
-                        ws.column_dimensions['H'].width=10
+                        ws.column_dimensions['H'].width=12
                         ws.freeze_panes = 'A2'
                         
                 else:
@@ -1341,32 +1358,9 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         
         elif self.get_status()=='Booked':##If it is Booked:
                 ##Add item to bookings lists
-                if s:
-                        self.unbook_set(sohar)
-                        if len(data)==7:
-                                self.DH[data[3]]=data ##Add item to WO
+                
 
-                                
-                        elif len(data)==5:
-                                if q<data[4]:
-                                        return 'Item not in store.'
-
-                                if data[1] in self.consumables: ##Check if item is already in WO
-                                        self.consumables[data[1]][4]+=data[4] ## increment qty      
-                                else:
-                                        self.consumables[data[1]]=data ##add new entry
-                                        
-                        elif len(data)==6:
-                                a=cable_decode(data[-1],data[:-1])
-                                for i in range(len(a)):
-                                        if i==0:
-                                                self.cables[data[-1]]=a[i]
-                                        else:
-                                                self.cables[data[-1]+'/'+str(i+1)]=a[i]
-
-                        self.book_set(sohar)
-                else:
-                        return 'Item not in store.'
+                return 'set booked'
 
         elif self.get_status()=='Sent':##if it is sent:
                 ##Add item to sohar history dict
@@ -1445,25 +1439,21 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         ##deduct from WO object 
         
         if self.get_status()=='Booked':
-                self.unbook_set(sohar)
-                if len(data)==7 and data[0][:3]!='Cab':
-                        del(self.DH[data[3]])
-                elif len(data)==5:
-                        del(self.consumables[data[1]])
-                elif len(data)==7 and data[0][:3]=='Cab':
-                        for k in self.cables:
-                                if data[3] in k:
-                                        pass
-                                else:
-                                        TD[k]=self.cables[k].copy()
-                        self.cables=TD
-                self.book_set(sohar)
+                return 'set booked'
         if self.get_status=='Sent':
                 return 'Item already sent.'
 
 if __name__=='__main__':
-        data=['Pump, ESP B 538-1900 70 HSG 79 STG CP CT TA MTSC', '10016185', '1C13', 'E161236679', 1, 'KK', 'New']
+        
+##        data=[['Pump, ESP B 538-1900 70 HSG 79 STG CP CT TA MTSC', '10016185', '1C13', 'E161236679', 1, 'KK', 'New'],
+##              [2000, 0, 0, 0, '4','370271']]
+##              
         s=Store('sohar','config.ini')
-        w=WO('AH125','config.ini')
-        a=w.add_item(s,data,'today')
+        s.generate_report('exported.xlsx')
+##        w=WO('AlI1','config.ini')
+##        for d in data:
+##                a=w.add_item(s,d,'today')
+##        for d in data:
+##        a=w.del_item(s,['Cable, SL-450 (E-Lead) Flat #4/1 AWG, G 5kV', '592966', '1C code', '370271', 2000, '', 'New'],'now')
+        
         
