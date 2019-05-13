@@ -1460,3 +1460,10 @@ class WO(Store):##Need standalone function to get WO files from folder uses
                 self.book_set(sohar)
         if self.get_status=='Sent':
                 return 'Item already sent.'
+
+if __name__=='__main__':
+        data=['Pump, ESP B 538-1900 70 HSG 79 STG CP CT TA MTSC', '10016185', '1C13', 'E161236679', 1, 'KK', 'New']
+        s=Store('sohar','config.ini')
+        w=WO('AH125','config.ini')
+        a=w.add_item(s,data,'today')
+        
