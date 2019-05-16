@@ -413,7 +413,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.sohar.return_item(data,date,Base)
             self.tabView()               
 
-    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):
+    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):##bbboy2
         filename=QtWidgets.QFileDialog.getSaveFileName(QtWidgets.QMainWindow(),'Save Transfer Note')
         f=filename[0]
         if f.endswith('.xlsx'):
@@ -932,6 +932,11 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 msgBox.setWindowTitle("Success")
                 msgBox.setText("Item repaired successfully.")
                 msgBox.exec_()
+                cons={}
+                for e in repTool.sp_list:
+                    cons[e[0]]=self.sohar.consumables[e[0]].copy()
+                    cons[e[0]][4]=e[1]
+                self.generate_TN(date=repTool.rep_date.text(),base='',well='',dh={},cables={},cons=cons,job=repTool.jobno.text())##bbboy
                 self.load_histories()
                 self.tabView()
         except:

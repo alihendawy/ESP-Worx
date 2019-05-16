@@ -1,3 +1,4 @@
 1- returning item, crashes software if cells left blank. Needs to be handled.
 2- If date is not selected, SW does not stop me or warn me.
 3- clear difa cables needs to be non modal
+4- scrap cable crashes when trying to scrap from cables in sohar store.

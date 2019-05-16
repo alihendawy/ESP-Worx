@@ -88,6 +88,12 @@ class Ui_Dialog(object):
         self.sn_input = QtWidgets.QLineEdit(self.layoutWidget)
         self.sn_input.setObjectName("sn_input")
         self.verticalLayout.addWidget(self.sn_input)
+        self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5.setGeometry(QtCore.QRect(290, 80, 47, 16))
+        self.label_5.setObjectName("label_5")
+        self.jobno = QtWidgets.QLineEdit(Dialog)
+        self.jobno.setGeometry(QtCore.QRect(330, 80, 81, 20))
+        self.jobno.setObjectName("jobno")
 
         self.retranslateUi(Dialog)
         self.cancel.clicked.connect(Dialog.reject)
@@ -110,6 +116,7 @@ class Ui_Dialog(object):
         self.label_7.setText(_translate("Dialog", "Qty"))
         self.label_8.setText(_translate("Dialog", "Serial Number"))
         self.rep_date.setDisplayFormat(_translate("Dialog", "dd-MMM-yyyy"))
+        self.label_5.setText(_translate("Dialog", "Job no"))
 
 
 import icons_rc
