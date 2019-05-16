@@ -72,6 +72,7 @@ class Ui_Dialog(object):
         self.date_input.setDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
         self.date_input.setCalendarPopup(True)
         self.date_input.setObjectName("date_input")
+        self.date_input.setDate(QtCore.QDate.currentDate())
         self.frame_2.raise_()
         self.frame.raise_()
         self.buttonBox.raise_()

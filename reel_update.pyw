@@ -82,6 +82,7 @@ class Ui_Dialog(object):
         self.date.setCalendarPopup(True)
         self.date.setTimeSpec(QtCore.Qt.TimeZone)
         self.date.setObjectName("date")
+        self.date.setDate(QtCore.QDate.currentDate())
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)

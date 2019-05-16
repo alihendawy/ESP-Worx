@@ -84,6 +84,7 @@ class Ui_Dialog(object):
         self.rep_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
         self.rep_date.setCalendarPopup(True)
         self.rep_date.setObjectName("rep_date")
+        self.rep_date.setDate(QtCore.QDate.currentDate())
         self.verticalLayout.addWidget(self.rep_date)
         self.sn_input = QtWidgets.QLineEdit(self.layoutWidget)
         self.sn_input.setObjectName("sn_input")

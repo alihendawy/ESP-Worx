@@ -106,26 +106,49 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         else:
             pass
     def cable_return(self):##mark2
-        form=Returning_cable(self.sohar)
-        form.exec_()
-        if form.result()==1:
-            sn=''
-            date=form.return_date.text()
-            Base=form.base_select.currentText()
-            data=[]
-            
-            for i in range(form.return_view.rowCount()):
-                sn=form.return_view.item(i,0).text()
+        state=True
+        while state:
+            form=Returning_cable(self.sohar)
+            form.exec_()
+            if form.result()==1:
+                sn=[]
+                date=form.return_date.text()
+                Base=form.base_select.currentText()
+                data=[]
+                well=[]
                 
-                data=[int(form.return_view.item(i,1).text()),int(form.return_view.item(i,2).text()),
-                int(form.return_view.item(i,3).text()),int(form.return_view.item(i,4).text()),
-                form.return_view.item(i,5).text()]
-                well=form.return_view.item(i,6).text()
-                enc={sn:data}
-                cable=Store_ManagerV09.cable_decode(sn,data)
-                
-                self.sohar.return_cable(cable,enc,date,Base,well)
-            self.tabView() 
+                for i in range(form.return_view.rowCount()):
+                    sn.append(form.return_view.item(i,0).text())
+                    if form.return_view.item(i,5) and form.return_view.item(i,6):
+                        data.append([int(form.return_view.item(i,1).text()),int(form.return_view.item(i,2).text()),
+                              int(form.return_view.item(i,3).text()),int(form.return_view.item(i,4).text()),
+                              form.return_view.item(i,5).text()])
+                        well.append(form.return_view.item(i,6).text())
+                    else:
+                       data.append([''])
+                       well.append('')
+                for d,w in zip(data,well):
+                    if '' in d or w =='':
+                        msg=QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Critical)
+                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowTitle("Error")
+                        msg.setText("Please fill all required cells for each reel.")
+                        msg.exec_()
+                        state=True
+                        break
+                    else:
+                        state=False
+            else:
+                return
+                        
+        for i in range(len(sn)):
+            enc={}
+            enc={sn[i]:data[i]}
+            cable=Store_ManagerV09.cable_decode(sn[i],data[i])
+            print(cable)
+            self.sohar.return_cable(cable,enc,date,Base,well[i])
+        self.tabView() 
             
     def clearDIFA(self):
         difaForm=Clearing_difa(self.sohar)
@@ -389,29 +412,55 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 state=True
 
     def WO_return(self):##mark2
-
-        returnForm=Returning_set(sohar=self.sohar)
-        returnForm.exec_()
-        
-        if returnForm.result()==1:
-            sn=[]
-            qty=[]
-            condition=[]
-            well=[]
-            date=returnForm.return_date.text()
-            Base=returnForm.base_select.currentText()
-            data=[]
-            for i in range(returnForm.return_view.rowCount()):
-                sn.append(returnForm.return_view.item(i,1).text())
-                qty.append(returnForm.return_view.item(i,2).text())
-                condition.append(returnForm.return_view.item(i,3).text().capitalize())
-                well.append(returnForm.return_view.item(i,4).text().upper())
+        state=True
+        while state:
+            returnForm=Returning_set(sohar=self.sohar)
+            returnForm.exec_()
             
-            for s,q,c,w in zip(sn,qty,condition,well):
-                data.append((s,q,c,w))
+            if returnForm.result()==1:
+                sn=[]
+                qty=[]
+                condition=[]
+                well=[]
+                date=returnForm.return_date.text()
+                Base=returnForm.base_select.currentText()
+                data=[]
+                for i in range(returnForm.return_view.rowCount()):
+                    sn.append(returnForm.return_view.item(i,1).text())
+                    if returnForm.return_view.item(i,2):
+                        qty.append(returnForm.return_view.item(i,2).text())
+                    else:
+                        qty.append('')
+                    if returnForm.return_view.item(i,3):
+                        condition.append(returnForm.return_view.item(i,3).text().capitalize())
+                    else:
+                        condition.append('')
+                    if returnForm.return_view.item(i,4):
+                        well.append(returnForm.return_view.item(i,4).text().upper())
+                    else:
+                        well.append('')
 
-            self.sohar.return_item(data,date,Base)
-            self.tabView()               
+                for s,q,c,w in zip(sn,qty,condition,well):
+                    data.append((s,q,c,w))
+                print(data)
+                for i in data:
+                    if '' in i:
+                        state=True
+                        msg=QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Critical)
+                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowTitle("Error")
+                        msg.setText("Please fill all cells in the return dialog.")
+                        msg.exec_()
+                        break
+                    else:
+                        state=False
+            else:
+                state=False
+                return
+                        
+        self.sohar.return_item(data,date,Base)
+        self.tabView()               
 
     def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):##bbboy2
         filename=QtWidgets.QFileDialog.getSaveFileName(QtWidgets.QMainWindow(),'Save Transfer Note')
@@ -1981,6 +2030,8 @@ class clearing_difa_cables(QtWidgets.QDialog,clear_difa2.Ui_Dialog)  :
     def __init__(self,parent=None):
         QtWidgets.QDialog.__init__(self,parent)
         self.setupUi(self)
+        self.setModal(0)
+        self.show()
         
         
 class Clearing_difa(QtWidgets.QDialog,clear_difa.Ui_Dialog):

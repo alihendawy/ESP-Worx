@@ -26,6 +26,7 @@ class Ui_Dialog(object):
         self.send_date.setDateTime(QtCore.QDateTime(QtCore.QDate(2019, 1, 1), QtCore.QTime(0, 0, 0)))
         self.send_date.setCalendarPopup(True)
         self.send_date.setObjectName("send_date")
+        self.send_date.setDate(QtCore.QDate.currentDate())
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(12, 32, 23, 16))
         self.label.setObjectName("label")

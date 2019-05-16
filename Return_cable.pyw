@@ -51,6 +51,7 @@ class Ui_Dialog(object):
         self.return_date.setCalendarPopup(True)
         self.return_date.setDate(QtCore.QDate(2019, 1, 1))
         self.return_date.setObjectName("return_date")
+        self.return_date.setDate(QtCore.QDate.currentDate())
         self.label_2 = QtWidgets.QLabel(self.groupBox)
         self.label_2.setGeometry(QtCore.QRect(230, 130, 71, 16))
         font = QtGui.QFont()

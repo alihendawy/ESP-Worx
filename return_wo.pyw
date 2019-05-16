@@ -61,7 +61,7 @@ class Ui_Dialog(object):
         self.return_date.setGeometry(QtCore.QRect(360, 60, 110, 22))
         self.return_date.setCurrentSection(QtWidgets.QDateTimeEdit.MonthSection)
         self.return_date.setCalendarPopup(True)
-        self.return_date.setDate(QtCore.QDate(2019, 1, 1))
+        self.return_date.setDate(QtCore.QDate.currentDate())
         self.return_date.setObjectName("return_date")
         self.label_2 = QtWidgets.QLabel(self.groupBox)
         self.label_2.setGeometry(QtCore.QRect(290, 60, 71, 16))

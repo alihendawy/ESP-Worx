@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+##<<<<<<< HEAD
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'clear_difa.ui'
@@ -99,7 +99,7 @@ class Ui_Dialog(object):
 
 
 import icons_rc
-=======
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'clear_difa.ui'
@@ -200,4 +200,4 @@ class Ui_Dialog(object):
 
 
 import icons_rc
->>>>>>> Branch
+

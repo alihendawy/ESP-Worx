@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'cable_scrap.ui'
@@ -74,7 +74,7 @@ class Ui_Dialog(object):
         self.armor.setItemText(3, _translate("Dialog", "SS Used"))
 
 
-=======
+
 # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'cable_scrap.ui'
@@ -120,6 +120,7 @@ class Ui_Dialog(object):
         self.date.setGeometry(QtCore.QRect(60, 10, 110, 22))
         self.date.setMinimumDate(QtCore.QDate(2019, 1, 1))
         self.date.setCalendarPopup(True)
+        self.date.setDate(QtCore.QDate.currentDate())
         self.date.setObjectName("date")
         self.label_4 = QtWidgets.QLabel(self.frame)
         self.label_4.setGeometry(QtCore.QRect(10, 130, 47, 21))
@@ -150,4 +151,4 @@ class Ui_Dialog(object):
         self.armor.setItemText(3, _translate("Dialog", "SS Used"))
 
 
->>>>>>> Branch
+
