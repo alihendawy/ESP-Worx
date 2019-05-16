@@ -1,4 +1,4 @@
-##Need to ditch the load INV button and add delete WO button.
+####Need to ditch the load INV button and add delete WO button.
 from PyQt5 import QtCore, QtGui, QtWidgets,Qt
 import lic
 import Store_ManagerV09
@@ -31,8 +31,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
     def __init__(self,parent=None):
         QtWidgets.QMainWindow.__init__(self,parent)
         self.setupUi(self)
-        
-##        self.store_viewer.customContextMenuRequested.connect(self.contextMenuEvent)
+   
         self.status=self.statusBar()
         self.status.showMessage("Load Workorder")
         self.load_inv()
@@ -40,7 +39,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.save_action.triggered.connect(self.save_progress) ##OK
         self.saveas_action.triggered.connect(self.backup_store) ##OK
         self.st_selector.currentTextChanged.connect(self.tabView) ##OK Action for selecting from drop down menu
-        self.load_store.clicked.connect(self.foo) ##Action for clicking load_store Button
+    
         self.open_store.triggered.connect(self.foo)
         self.load_wo.clicked.connect(self.wo_load) ## OK Action for clicking Load WO Button
         self.open_WO.triggered.connect(self.wo_load) ##OK
@@ -66,36 +65,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.actionClear_DIFA_cables.triggered.connect(self.clearDIFA_cables)
         self.scrap.triggered.connect(self.scrap_cable)
         
-####    def contextMenuEvent(self, event):
-####        menu = QtWidgets.QMenu(self)
-####        add_wo=menu.addAction("Add to WO",self.add2WO)
-####        action = menu.exec_(QtGui.QCursor.pos())
-##    def add2WO(self):
-##        if self.WO.get_status()=='Unbooked':
-##            pn=''
-##            i=self.store_viewer.currentRow()
-##            sn=self.store_viewer.item(i,3)
-##            sn=sn.text()
-##            data=self.sohar.DH[sn].copy()
-##            if sn!='None':
-##                if sn in self.sohar.DH:
-##                    data=self.sohar.DH[sn].copy()
-##                elif sn in self.sohar.cables:
-##                    data=self.sohar.cables[sn].copy()
-##                self.WO.add_item(self.sohar,data)
-##            else:
-##                pn=self.store_viewer.item(i,1)
-##                pn=pn.text()
-##                data=self.sohar.consumables[pn].copy()
-##                self.WO.add_item(self.sohar,data)
-##        else:
-##            msg=QtWidgets.QMessageBox()
-##            msg.setIcon(QtWidgets.QMessageBox.Critical)
-##            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
-##            msg.setWindowTitle("Error")
-##            msg.setText("You cannot use this method if wororder is already sent or booked.")
-##            msg.exec_()
-
     def scrap_cable(self):
         form=scrapping()
         form.exec_()
@@ -151,17 +120,12 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 data=[int(form.return_view.item(i,1).text()),int(form.return_view.item(i,2).text()),
                 int(form.return_view.item(i,3).text()),int(form.return_view.item(i,4).text()),
                 form.return_view.item(i,5).text()]
-                print(data)
                 well=form.return_view.item(i,6).text()
                 enc={sn:data}
-                print(enc)
                 cable=Store_ManagerV09.cable_decode(sn,data)
-                print(cable)
-               
-                print('Im gone.')
+                
                 self.sohar.return_cable(cable,enc,date,Base,well)
-                print('Never Know what hit em!')
-            self.tabView()       
+            self.tabView() 
             
     def clearDIFA(self):
         difaForm=Clearing_difa(self.sohar)
@@ -193,6 +157,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             msg.setWindowTitle("Success")
             msg.setText("Orders updated successfully.")
             msg.exec_()
+			
     def wo_load(self):
 
         wellsList=wells_list(self.sohar.get_wos())
@@ -448,7 +413,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.sohar.return_item(data,date,Base)
             self.tabView()               
 
-    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):##findme2
+    def generate_TN(self,date,base,well,dh={},cables={},cons={},job=''):##bbboy2
         filename=QtWidgets.QFileDialog.getSaveFileName(QtWidgets.QMainWindow(),'Save Transfer Note')
         f=filename[0]
         if f.endswith('.xlsx'):
@@ -614,7 +579,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             
         if r==QtWidgets.QMessageBox.Yes:
             flag=self.WO.book_set(self.sohar)
-            print('booked')
             if flag=='Not Available':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -666,6 +630,21 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
+                    elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
+                        
                             
                 elif subtraction.id_input.text() in self.WO.cables:
                     data=self.WO.cables[subtraction.id_input.text()].copy()
@@ -696,6 +675,21 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
+                    elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
+                        
                 else:
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
@@ -733,6 +727,20 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                     msgBox.exec_()
+                elif flag=='Item already sent.':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Item was already sent to field. You can return it instead.")
+                        msgBox.exec_()
+                elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
             else:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
@@ -770,10 +778,18 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
                         msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
+                        msgBox.exec_()
+                        
                             
                 elif addition.id_input.text() in self.sohar.cables:
                     data=self.sohar.cables[addition.id_input.text()].copy()
-                    data[4]=addition.spinBox.value()
+                    data.append(addition.id_input.text())
                     flag=self.WO.add_item(self.sohar,data,addition.date_input.text())
                     self.load_histories()
                     self.tabView()
@@ -790,6 +806,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
+                        msgBox.exec_()
+                    elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
                 else:
                     msgBox=QtWidgets.QMessageBox()
@@ -818,6 +841,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
+                        msgBox.exec_()
+                elif flag=='set booked':
+                        msgBox=QtWidgets.QMessageBox()
+                        msgBox.setIcon(QtWidgets.QMessageBox.Critical)
+                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowTitle("Error")
+                        msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
             else:
                 
@@ -902,6 +932,11 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 msgBox.setWindowTitle("Success")
                 msgBox.setText("Item repaired successfully.")
                 msgBox.exec_()
+                cons={}
+                for e in repTool.sp_list:
+                    cons[e[0]]=self.sohar.consumables[e[0]].copy()
+                    cons[e[0]][4]=e[1]
+                self.generate_TN(date=repTool.rep_date.text(),base='',well='',dh={},cables={},cons=cons,job=repTool.jobno.text())##bbboy
                 self.load_histories()
                 self.tabView()
         except:
@@ -979,27 +1014,60 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             pass
         
     def search_by(self,IDtype,ID,view):
-        VD1={'Sohar Downhole equipment':self.sohar.DH,'Sohar Cables':self.sohar.cables,
-            'Sohar Consumables':self.sohar.consumables,
+        VD1={'Sohar Downhole equipment':self.sohar.DH,
+            'Sohar Consumables':self.sohar.consumables,'Repair History':self.sohar.rhistory,
             'Sohar Used equipment':self.sohar.used, 'Sohar DIFA equipment':self.sohar.difa}
         
-        VD2={'Sohar History':self.sohar.shistory,'Repair History':self.sohar.rhistory,'Cable History':self.sohar.chistory,
-            'Booked Sets':self.sohar.bookings}
-
+        VD2={'Sohar History':self.sohar.shistory,'Booked Sets':self.sohar.bookings}
+            
+        VD3={'Sohar Cables':self.sohar.cables,'Sohar Used Cables':self.sohar.used_cables,
+        'Sohar DIFA Cables':self.sohar.difa_cables,'Cable History':self.sohar.chistory }
+        
         IDD={'Description':0,'Part Number':1,'1C Code':2, 'Serial Number':3}
         data=[]
         if view in VD1:
-            for k in VD1[view]:
-                if ID.lower() in str(VD1[view][k][IDD[IDtype]]).lower():
-                    data.append(VD1[view][k].copy())
-                else:
-                    pass
+            if view != 'Repair History':
+                for k in VD1[view]:
+                    if ID.lower() in str(VD1[view][k][IDD[IDtype]]).lower():
+                        data.append(VD1[view][k].copy())
+                    else:
+                        pass
+            else:
+                for k in VD1[view]:
+                    if ID.lower() in str(VD1[view][k][0][IDD[IDtype]]).lower():
+                        data.extend(VD1[view][k].copy())
+                    else:
+                        pass
+                    
         elif view in VD2:
             for L in VD2[view]:
                 if ID.lower() in str(L[IDD[IDtype]]).lower():
                     data.append(L.copy())
                 else:
                     pass
+        elif view in VD3:
+            if IDtype!='Serial Number':
+                msg=QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Warning)
+                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowTitle("Warning")
+                msg.setText("Search not allowed, you can only search by SN in this view.")
+                msg.exec_()
+                return []
+            else:
+                if view!='Cable History':
+                    for k in VD3[view]:
+                        if ID.lower() in k:
+                            a=[k]+VD3[view][k].copy()
+                            data.append(a)
+                else:
+                    for L in VD3[view]:
+                        if ID.lower() in str(L[0]).lower():
+                            data.append(L.copy())
+                        
+                        
+                
+            
         elif view=='Minimum Store Levels':
             if IDtype=='1C Code' or IDtype=='Serial Number':
                 msg=QtWidgets.QMessageBox()
@@ -1022,6 +1090,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     L=[self.sohar.pn2desc_map()[k],k,self.sohar.av_pn_map()[k],self.sohar.minStore_map[k],a,b,c]
                     if ID.lower() in str(L[IDD[IDtype]]).lower():
                         data.append(L)
+        
     
         return data
 
@@ -1036,13 +1105,15 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.tabView()
             return
         data=self.search_by(a,b,c)
-        tabchk1={'Sohar Downhole equipment','Sohar Cables','Spare Parts'}
+        tabchk1={'Sohar Cables','Sohar Used Cables'}
         tabchk2={'Sohar Used equipment','Booked Sets','Sohar DIFA equipment'}
         
         self.store_viewer.clear()
         self.store_viewer.setRowCount(len(data))
-        if self.st_selector.currentText() in tabchk1:
+        if self.st_selector.currentText() =='Sohar Downhole equipment':
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition'])
+        elif self.st_selector.currentText() in tabchk1:
+            self.store_viewer.setHorizontalHeaderLabels(['Reel no','Galv New','Galv Used','SS New','SS Used','Size'])
         elif self.st_selector.currentText() in tabchk2:
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well'])
         elif self.st_selector.currentText() == 'Sohar Consumables':
@@ -1054,10 +1125,12 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Quantity','Date In',
                                                          'Condition','Repair date'])
         elif self.st_selector.currentText() =='Cable History':
-            self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','1C Code','Serial Number','Old Quantity','New Quantity',
-                                                         'Delta','From Reel','To Reel'])
+            self.store_viewer.setHorizontalHeaderLabels(['Reel Number','Galv New','Galv Used','SS New','SS Used','Size','Update','Arm/Cond',
+                                                         'Well','Operation','Date'])
         elif self.st_selector.currentText() =='Minimum Store Levels':
             self.store_viewer.setHorizontalHeaderLabels(['Description','Part Number','Av Quantity','Min Store required','Intransit order','Intransit QTY','ETA'])
+        elif self.st_selector.currentText() == 'Sohar DIFA Cables':
+            self.store_viewer.setHorizontalHeaderLabels(['Reel no','Galv New','Galv Used','SS New','SS Used','Size','Base','Well'])
         j=0
         if len(data)==0:
             return
@@ -1101,9 +1174,9 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.DH[r][i]))) ## Copy list items to table row
                     j+=1
                 
-                self.store_viewer.resizeColumnToContents(0)
-                self.store_viewer.resizeColumnToContents(1)
-                self.store_viewer.resizeColumnToContents(2)
+                for i in range(len(header)):
+                    self.store_viewer.resizeColumnToContents(i)
+                
 
                         
             elif self.st_selector.currentText()=='Sohar Cables': ## Sohar cables is selected
@@ -1202,8 +1275,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.consumables[r][i]))) ## Copy list items to table row
                     j+=1
-                
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(con_header)):
+                    self.store_viewer.resizeColumnToContents(i)
 
 
             
@@ -1225,7 +1298,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(s_header)):
+                    self.store_viewer.resizeColumnToContents(i)
 
 
             elif self.st_selector.currentText()=='Repair History': ## Repair history is selected
@@ -1269,7 +1343,8 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1
                 
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(b_header)):
+                    self.store_viewer.resizeColumnToContents(i)
             
                         
             elif self.st_selector.currentText()=='Sohar Used equipment': ## Sohar Used Equipment is selected
@@ -1289,8 +1364,9 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         self.store_viewer.setItem(j,i, item)
 ##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.used[r][i]))) ## copy list items to table row
                     j+=1 ## increment col number
-                
-                self.store_viewer.resizeColumnToContents(0)
+                for i in range(len(b_header)):
+                    self.store_viewer.resizeColumnToContents(i)
+                    
             elif self.st_selector.currentText()=='Sohar DIFA equipment': ##Min store
                 difa_header=['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Base','Well']
                 self.store_viewer.setRowCount(len(self.sohar.difa))
@@ -1315,9 +1391,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 self.store_viewer.setRowCount(len(self.sohar.minStore_map))
                 self.store_viewer.setColumnCount(len(min_header))
                 self.store_viewer.setHorizontalHeaderLabels(min_header)
-                
-               
-                
+
                 j=0
                 for k in self.sohar.minStore_map :
                     
@@ -1718,8 +1792,17 @@ class Returning_cable(QtWidgets.QDialog,Return_cable.Ui_Dialog):
             self.check.append(sn)
             
         sn2=QtWidgets.QTableWidgetItem(sn)
+        z=QtWidgets.QTableWidgetItem(str(0))
+        z2=QtWidgets.QTableWidgetItem(str(0))
+        z3=QtWidgets.QTableWidgetItem(str(0))
+        z4=QtWidgets.QTableWidgetItem(str(0))
         self.return_view.insertRow(self.return_view.rowCount())
+        
         self.return_view.setItem(self.return_view.rowCount()-1,0,sn2)
+        self.return_view.setItem(self.return_view.rowCount()-1,1,z)
+        self.return_view.setItem(self.return_view.rowCount()-1,2,z2)
+        self.return_view.setItem(self.return_view.rowCount()-1,3,z3)
+        self.return_view.setItem(self.return_view.rowCount()-1,4,z4)
         for i in range(self.return_view.rowCount()):
             self.return_view.resizeColumnToContents(i) 
     def rem2return(self):

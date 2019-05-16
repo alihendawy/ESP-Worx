@@ -28,10 +28,6 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.load_store = QtWidgets.QPushButton(self.centralwidget)
-        self.load_store.setEnabled(True)
-        self.load_store.setObjectName("load_store")
-        self.horizontalLayout.addWidget(self.load_store)
         self.load_wo = QtWidgets.QPushButton(self.centralwidget)
         self.load_wo.setDefault(False)
         self.load_wo.setObjectName("load_wo")
@@ -200,7 +196,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Pump Master V1.0"))
-        self.load_store.setText(_translate("MainWindow", "Load Store"))
         self.load_wo.setText(_translate("MainWindow", "Load WO"))
         self.create_wo.setText(_translate("MainWindow", "create WO"))
         self.repair.setText(_translate("MainWindow", "Repair"))
