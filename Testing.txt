@@ -10,4 +10,7 @@ Approaches for testing:
 7- Adding items with excessive qty than store.
 8- Trying to repair with excessive qty than in store.
 
+9- Increased font for contents of drop down menus in Main window.
+10- 
+
 
