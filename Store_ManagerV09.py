@@ -563,6 +563,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         it should find SN1 and add the length to it. The aim to make the cable
         available in sohar store when WO is requested'''
         arm=['Galv New','Galv Used','SS New','SS Used']
+        well=well.upper()
         index=arm.index(armor)
         if self.cables[SN2][index]>=length:
                 x1=self.cables[SN1].copy()
@@ -575,26 +576,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 self.chistory.append(b)
         else:
                 return False
-##        metal_ch1='SS' in self.cables[SN1][0]
-##        metal_ch2='SS' in self.cables[SN2][0]
-##        if metal_ch1!=metal_ch2:
-##                self.rogueReels[SN1]=[length,SN2,SN1]
-##                
-##        if self.cables[SN2][4]>=length:                         ##Check if length<=qty in reel SN2
-##                
-##                a=self.cables[SN1][0:5].copy()
-##                a.extend([self.cables[SN1][4]+length,length,SN2,None])
-##                b=self.cables[SN2][0:5].copy()
-##                b.extend([self.cables[SN2][4]-length,-length,None,SN1])
-##                
-##                self.chistory.append(a)
-##                self.chistory.append(b)          
-##                self.cables[SN1][4]+=length                     ##Yes: increment qty of SN1 by length
-##                self.cables[SN2][4]-=length                     ## decrement qty of SN2 by length
-##                self.save()
-##                return True
-##        else:
-##                return False
+
         
     def get_booked(self): ##DONE
         ''''Returns list with name of booked WO's.'''
@@ -635,6 +617,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         del(self.used[SN]) ##delete item from used dict
                 for p in SP: ##deduct spares to be used
                         self.consumables[p[0]][4]-=int(p[1])
+                self.rhistory[(SN,date)]=item
         elif SN in self.used_cables:
                 item=self.used_cables[SN].copy()
                 item=item[:-2]
@@ -657,7 +640,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 return 'Itemnot','na'
 
         
-        self.rhistory[(SN,date)]=item
+        
         self.clear_ZQ()
         self.save()
         return 'OK',''
@@ -1455,9 +1438,9 @@ class WO(Store):##Need standalone function to get WO files from folder uses
 if __name__=='__main__':
         
         s=Store('sohar','config.ini')
-        w=WO('TN3','config.ini')
+##        w=WO('TN3','config.ini')
 ##        w.unbook_set(s)
-        s.Move_set(w,'')
+##        s.Move_set(w,'')
 
         
         

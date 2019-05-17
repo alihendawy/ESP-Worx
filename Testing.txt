@@ -1,3 +1,13 @@
+Approaches for testing:
 
+1- Creating WO.
+2- Booking and sending. 
+3- Returning items and cables.
+4- Clearing eqy and cables from DIFA.
+5- Repairing eqy & cables.
+
+6- Craeting WO with excessive consumbales and trying to book.
+7- Adding items with excessive qty than store.
+8- Trying to repair with excessive qty than in store.
 
 

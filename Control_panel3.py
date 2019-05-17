@@ -1369,6 +1369,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             self.store_viewer.setItem(j,i, item)
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                         j+=1 ## increment col number
+                print(self.sohar.rhistory.keys())
                 for i in range(len(r_header)):
                     self.store_viewer.resizeColumnToContents(i)
 
@@ -1573,10 +1574,10 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     item.setTextAlignment(128 | 4)
                     self.store_viewer.setItem(j,4,item ) ## Make last entry manually to qty col in table
                     j+=1 ## increment col number
+
+                for i in range(self.store_viewer.columnCount()):
+                    self.store_viewer.resizeColumnToContents(i)
                 
-                self.store_viewer.resizeColumnToContents(0)
-                self.store_viewer.resizeColumnToContents(1)
-                self.store_viewer.resizeColumnToContents(2)
             self.store_viewer.setSortingEnabled(True)
                 
         except:
