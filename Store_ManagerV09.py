@@ -164,8 +164,6 @@ class Store(object):
                         row[3]=row[3].strftime('%d-%b-%Y')
 
                 self.orders[str(row[0])]=row[1:]
-        print(self.orders)
-                
         
         self.save()
         return
@@ -345,7 +343,6 @@ class Store(object):
                         self.consumables[k][4]-=WO.consumables[k][4]
                 return True
         else:
-##                print('Not available', a)
                 return False
 
     def add_WO(self,WO):#DONE
@@ -358,7 +355,6 @@ class Store(object):
                         self.DH[k]=WO.DH[k].copy() ##No:Add item to sohar.DH
                 else:
                         pass
-##                        print('Item already in store', k)
         for k in WO.cables:
                 sn=WO.cables[k][3]
                 c.append(WO.cables[k])
@@ -407,7 +403,6 @@ class Store(object):
                 a=c.copy()
                 a.extend(['',Base,well])
                 a[5]=date
-                print(a)
                 self.shistory.append(a)
         if Base=='Lekhwair':
                 del(self.lekh[c[3]])
@@ -590,7 +585,6 @@ class Store(object):
 
                 for p in SP: ## Check if there is enough spare parts
                         if str(p[0]) not in self.consumables or self.consumables[p[0]][4]<p[1]:
-##                                print('Insufficient qty from spare part PN: '+str(p[0]))
                                 return 'Insufficient',str(p[0])
                 if self.used[SN][0][:3]=='Cab': ##check if item is cable
                         self.cables[SN]=self.used[SN].copy() ##Add item to cable
@@ -610,7 +604,6 @@ class Store(object):
                 item=item[:-2]
                 for p in SP: ## Check if there is enough spare parts
                         if str(p[0]) not in self.consumables or self.consumables[p[0]][4]<p[1]:
-##                                print('Insufficient qty from spare part PN: '+str(p[0]))
                                 return 'Insufficient',str(p[0])
                         
                 for p in SP: ##deduct spares to be used
@@ -623,7 +616,6 @@ class Store(object):
                                 
                 
         else:                              
-##                print('Item not in used store.')
                 return 'Itemnot','na'
 
         
@@ -657,7 +649,6 @@ class Store(object):
                 if row[3]!=None:
                         s,q=self.find_item(str(row[3]),'SN')
                         if s:
-##                                print('Item already in Sohar. Please check SN.')
                                 check.append(str(row[3]))
 
         for row in batch: ##Loop to turn non None SN's & PNs to strings instead of numbers
@@ -678,7 +669,6 @@ class Store(object):
                         self.cables[row[3]]=cable_encode([row])
                 elif row[3]==None and row[-1] not in self.invoices :
                         if row[1] in self.consumables:
-##                                print(self.consumables[row[1]])
                                 self.consumables[row[1]][4]+=row[4]
                         else:
                                 
@@ -1147,7 +1137,6 @@ class WO(Store):
                 
                     
                 else: ## if WO status is anything else raise exception.
-##                        print('WO was not sent. Please check in booked sets.')
                         return 'WO not sent'
 
         elif used:
@@ -1179,13 +1168,11 @@ class WO(Store):
             are available. Does not deduct items from Sohar.'''
         keys=list(self.DH.keys())+list(self.cables.keys())##Accumulate keys for DH & cables dicts
         states=[]               ##List to accumulate avail test for each item
-        items=[]
-        print(keys)##List to accumulate missing items
+        items=[]  ##List to accumulate missing items
         for k in keys:
                 if '/' in k:
                         continue
                 s,q=sohar.find_item(k,'SN') ##For each key call find_item to look for it on sohar
-                print(f'{k} is {s}.')
                 if k in sohar.DH:
                         if s==True and q>=self.DH[k][4]:
                                 states.append(s) ##If it is availbale in sohar and qty is adequate append true to states list
@@ -1198,7 +1185,6 @@ class WO(Store):
                         else:
                                 states.append(False)
                                 items.append(self.cables[k][0])
-                print(states)
         ##same as above but for consumbales
         keys=list(self.consumables.keys())
         for k in keys:
@@ -1278,7 +1264,7 @@ class WO(Store):
         
         self.set_status('Booked') ##Mark WO as booked in excel and object
         self.save()
-        print('wo saved')
+
         
     def unbook_set(self,sohar): ##DONE
         '''Removes WO from Booked tab in excel file to Sohar store.
@@ -1311,7 +1297,6 @@ class WO(Store):
         elif len(data)==6:
                 s,q=sohar.find_item(data[5],'SN')
         else:
-##                print('Incorrect data format.')
                 return 'Incorrect data format.'
         
         if self.get_status()=='Unbooked':

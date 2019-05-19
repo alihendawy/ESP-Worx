@@ -1,4 +1,3 @@
-
 from PyQt5 import QtCore, QtGui, QtWidgets,Qt
 import lic
 import Store_ManagerV09
@@ -146,7 +145,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             enc={}
             enc={sn[i]:data[i]}
             cable=Store_ManagerV09.cable_decode(sn[i],data[i])
-            print(cable)
             self.sohar.return_cable(cable,enc,date,Base,well[i])
         self.tabView() 
             
@@ -442,7 +440,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 
                 for s,q,c,w in zip(sn,qty,condition,well):
                     data.append((s,q,c,w))
-                print(data)
                 for i in data:
                     if '' in i:
                         state=True
@@ -1369,7 +1366,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             self.store_viewer.setItem(j,i, item)
 ##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                         j+=1 ## increment col number
-                print(self.sohar.rhistory.keys())
                 for i in range(len(r_header)):
                     self.store_viewer.resizeColumnToContents(i)
 
