@@ -27,14 +27,14 @@ def file_write(sohar,WO,tab,datein='',dateout=None):##Booking set use is DONE.
 
 def cable_decode(sn,data):
     
-    c1={'0':('Cable, SL-450 (E-Lead) Flat #4/1 AWG, G 5kV','592966','1C code','','','','New'),
-        '1':('Cable, SL-450 (E-Lead) Flat #4/1 AWG, G 5kV','592966','1C code','','','','Used'),
-        '2':('Cable, SL-450 (E-Lead) Flat #4/1 AWG, SS 5kV', '00870393', '1C590', '', '', '', 'New'),
-        '3':('Cable, SL-450 (E-Lead) Flat #4/1 AWG, SS 5kV', '00870393', '1C590', '', '', '', 'Used')}
-    c2={'0':('Cable, SL-450 (E-Lead) Flat #2/7 AWG, G 5kV','New','592977'),
-        '1':('Cable, SL-450 (E-Lead) Flat #2/7 AWG, G 5kV','Used','592977'),
-        '2':('Cable, SL-450 (E-Lead) Flat #2/7 AWG, SS 5kV','New','00870394'),
-        '3':('Cable, SL-450 (E-Lead) Flat #2/7 AWG, SS 5kV','Used','00870394')}
+    c1={'0':('Cable, ESP flat SL-450 #4 solid ELB G .020 5kV','592966','280424','','','','New'),
+        '1':('Cable, ESP flat SL-450 #4 solid ELB G .020 5kV','592966','280424','','','','Used'),
+        '2':('Cable, ESP flat SL-450 #4 solid ELB SS .020 5kV', '870393', '280477', '', '', '', 'New'),
+        '3':('Cable, ESP flat SL-450 #4 solid ELB SS .020 5kV', '870393', '280477', '', '', '', 'Used')}
+    c2={'0':('Cable, ESP flat SL-450 #2/7 str cpt ELB G .020 5kV','955718','280470','','','','New'),
+        '1':('Cable, ESP flat SL-450 #2/7 str cpt ELB G .020 5kV','955718','280470','','','','Used'),
+        '2':('Cable, ESP flat SL-450 #2/7 str cpt ELB SS .020 5kV','01165706','280515','','','','New'),
+        '3':('Cable, ESP flat SL-450 #2/7 str cpt ELB SS .020 5kV','01165706','280515','','','','Used')}
     result=[]
     if data[4]=='4':
         for i in range(len(data)):
@@ -62,9 +62,9 @@ def cable_encode(data):
     size=''
     x=[]
     c1={('592966','New'):[1,0,0,0],('592966','Used'):[0,1,0,0],
-        ('00870393','New'):[0,0,1,0],('00870393','Used'):[0,0,0,1],
-        ('592977','New'):[1,0,0,0],('592977','Used'):[0,1,0,0],
-        ('00870394','New'):[0,0,1,0],('00870394','Used'):[0,0,0,1]}
+        ('870393','New'):[0,0,1,0],('870393','Used'):[0,0,0,1],
+        ('955718','New'):[1,0,0,0],('955718','Used'):[0,1,0,0],
+        ('01165706','New'):[0,0,1,0],('01165706','Used'):[0,0,0,1]}
     for d in data:
         r=c1[(d[1],d[6])].copy()
         for i in range(len(r)):
@@ -78,7 +78,7 @@ def cable_encode(data):
         
     return result
 
-class Store(object): ## Thinking about adding two more dict's. One for used and one for Booked eqy.
+class Store(object): 
     def __init__(self,name,filename):##Done
         ''' Creates a store object containing 3 dict's: downhole(DH), Cables &
         consumables as attributes.
@@ -220,8 +220,6 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         dh[s[0]][4]=s[1]
                 elif s[0] in self.cables and s[1]<=sum(self.cables[s[0]][:4]):
                         a=cable_decode(s[0],self.cables[s[0]])
-##                        cables[s[0]]=self.cables[s[0]].copy()
-##                        cables[s[0]][4]=s[1]
                         for i in range(len(a)):
                                 if i>0:
                                         cables[s[0]+'/'+str(i+1)]=a[i]
@@ -236,11 +234,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 else:
                         pass
         
-##        for c in cables:
-##                if c in self.rogueReels:
-##                        rogue=self.rogueReels[c].copy()
-##                else:
-##                        rogue=[]
+
         for k in dh:
                 if 'Pump,' in dh[k][0]:
                         pcount+=1
@@ -370,14 +364,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                 c.append(WO.cables[k])
         if len(WO.cables)>0:
                 self.cables[sn]=cable_encode(c)
-##                if '/' in k:
-##                        continue
-##                if True not in self.find_item(k,'SN'):##check to see if each item is not in sohar cables dict
-##                        self.cables[k]=WO.cables[k].copy()##No:Add item to sohar.cables
-##                                    
-##                else:
-##                        pass
-##                        print('Item already in store', k) ##Yes: Return False
+
         for k in WO.consumables:
                 if True not in self.find_item(k,'PN'): ##check to see if each item is not in sohar cons dict
                         self.consumables[k]=WO.consumables[k].copy()##No: add new entry for this item
@@ -555,7 +542,7 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         
         return
        
-    def update_reel(self,SN1,SN2,length,armor,well,date): ## Done, but need to think about how to represent adding cables with different armors (Rogue reels)
+    def update_reel(self,SN1,SN2,length,armor,well,date): 
         '''method to change cable reels to fit WO creation. SN1 is the reel to
         receive extra cable. SN2 is the reel to deduct cable from. length is
         the length of cable to be added and removed. Method should find SN2 in
@@ -757,6 +744,11 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
                         pnMap[self.used[k][1]]+=self.used[k][4]
                 else:
                         pnMap[self.used[k][1]]=self.used[k][4]
+        for k in self.difa:
+                if self.difa[k][1] in pnMap:
+                        pnMap[self.difa[k][1]]+=self.used[k][4]
+                else:
+                        pnMap[self.difa[k][1]]=self.used[k][4]
         return pnMap
     def booked_pn_map(self):##DONE
         '''Creates dictionary for all items in sohar booked store. The key is PN and value is qty.
@@ -1067,15 +1059,15 @@ class Store(object): ## Thinking about adding two more dict's. One for used and 
         
         
         if inc==av+used+booked+history:
-##                print('Valid')
+
                 return True,(inc,av,used,booked,history)
         else:
-##                print('Invalid, '+str(inc-(av+used+booked+history))+' pieces missing.')
+
                 return False,(inc,av,used,booked,history)
 
 
-class WO(Store):##Need standalone function to get WO files from folder uses
-                ##This class to create objects for them.
+class WO(Store):
+                
         
     def __init__(self,name,filename): ##DONE
         '''Creates WO object, uses Store init function but adds base attribute.
@@ -1096,13 +1088,7 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         self.sent=config.get(self.name,"sent")
         self.internal=eval(config.get(self.name,"internal"))
         
-        
-        
-##        for k in self.cables:
-##                if k in rogues:
-##                        self.rogue=rogues[k].copy()
-##                else:
-##                        self.rogue=[]
+
     def set_base(self,base):
         self.base=base
         return
@@ -1140,7 +1126,7 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         was pulled or just returned as new. If returned set is new then add
         it to Store. If the returned set is used then add it to used store.
         datein must be specified to log in sohar history'''
-        ##Need to think about marking it for DIFA.
+        
         self.sent=''
         if not used:
                 if self.get_status()=='Sent':
@@ -1435,12 +1421,6 @@ class WO(Store):##Need standalone function to get WO files from folder uses
         if self.get_status=='Sent':
                 return 'Item already sent.'
 
-if __name__=='__main__':
-        
-        s=Store('sohar','config.ini')
-##        w=WO('TN3','config.ini')
-##        w.unbook_set(s)
-##        s.Move_set(w,'')
 
         
         
