@@ -719,15 +719,17 @@ class Store(object):
         It is an accumulation of all qty's for each PN in the entire store.'''
         pnMap={}
         for k in self.DH:
+                
                 if self.DH[k][1] in pnMap:
-                        pnMap[self.DH[k][1]]+=self.DH[k][4]
+                        pnMap[self.DH[k][1]]+=int(self.DH[k][4])
                 else:
-                        pnMap[self.DH[k][1]]=self.DH[k][4]
-        for k in self.cables:
-                if self.cables[k][1] in pnMap:
-                        pnMap[self.cables[k][1]]+=self.cables[k][4]
-                else:
-                        pnMap[self.cables[k][1]]=self.cables[k][4]
+                        pnMap[self.DH[k][1]]=int(self.DH[k][4])
+               
+##        for k in self.cables:
+##                if self.cables[k][1] in pnMap:
+##                        pnMap[self.cables[k][1]]+=self.cables[k][4]
+##                else:
+##                        pnMap[self.cables[k][1]]=self.cables[k][4]
         for k in self.consumables:
                 if k in pnMap:
                         pnMap[k]+=self.consumables[k][4]
@@ -1420,6 +1422,9 @@ class WO(Store):
                 return 'set booked'
         if self.get_status=='Sent':
                 return 'Item already sent.'
+if __name__=='__main__':
+        s=Store('sohar','config.ini')
+        a=s.av_pn_map()
 
 
         

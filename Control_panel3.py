@@ -249,7 +249,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 accum=[]
                 for pn,qty in pn_map.items():
                     if pn in self.sohar.minStore_map:
-                        if (qty-self.sohar.minStore_map[pn])>0 and (qty-self.sohar.minStore_map[pn])<=5:
+                        if (qty-self.sohar.minStore_map[pn])>0 and (qty-self.sohar.minStore_map[pn])<=int(0.1*self.sohar.minStore_map[pn]):
                             accum.append((pn,qty,'Close to minimum'))
                         elif (qty-self.sohar.minStore_map[pn])==0 or (qty-self.sohar.minStore_map[pn])<0:
                             accum.append((pn,qty,'Below/at minimum'))
@@ -274,7 +274,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 qty1=pn_map[pn]
                 qty2=self.sohar.minStore_map[pn]
                 qty=qty1-qty2
-                if qty>0 and qty<=5:
+                if qty>0 and qty<=int(0.1*qty2):
                     ##raise warning
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Warning)
@@ -290,7 +290,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     msg.setWindowTitle("Error")
                     msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Please order as soon as possible.")
                     msg.exec_()
-                elif qty>5:
+                elif qty>int(0.1*qty2):
                     ## Satisfactory levels
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Information)
@@ -1456,15 +1456,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         c=None
 
                     L=[self.sohar.pn2desc_map()[k],k,self.sohar.av_pn_map()[k],self.sohar.minStore_map[k],a,b,c]
-                    print(L)
                     for i in range(0,len(L)):
                         item=QtWidgets.QTableWidgetItem(str(L[i]))
                         if i!=0:
                             item.setTextAlignment(128 | 4)
-                        if L[2]-L[3]>5:
+                        if L[2]-L[3]>0:
                             item.setBackground(QtGui.QColor(0,255,0))
-                        elif L[2]-L[3]>0 and L[2]-L[3]<=5:
-                            item.setBackground(QtGui.QColor(255,255,0))
+                       
                         elif L[2]-L[3]<=0:
                             item.setBackground(QtGui.QColor(255,0,0))
                         self.store_viewer.setItem(j,i,item)
