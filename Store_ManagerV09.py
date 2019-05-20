@@ -1203,9 +1203,9 @@ class WO(Store):
                         states.append(False)
                         items.append(self.consumables[k][0])
 
-         for k in WO.internal:
-                s,q,=sohar.find_item(k,'PN')
-                if s==True and q>=self.consumables[k][4]:
+        for k in self.internal:
+                s,q=sohar.find_item(k,'PN')
+                if s==True and q>=self.internal[k][4]:
                         states.append(s)
                 else:
                         state.append(False)
@@ -1428,7 +1428,13 @@ class WO(Store):
                 return 'Item already sent.'
 if __name__=='__main__':
         s=Store('sohar','config.ini')
-        a=s.av_pn_map()
+        print(s.consumables['719328'][4])
+        print(s.consumables['2031612'][4])
+        w=WO('WO11','config.ini')
+        s.Move_set(w,'now')
+        print(s.consumables['719328'][4])
+        print(s.consumables['2031612'][4])
+        
 
 
         
