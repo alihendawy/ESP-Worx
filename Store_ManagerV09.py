@@ -341,6 +341,8 @@ class Store(object):
                         del(self.cables[k])
                 for k in WO.consumables:
                         self.consumables[k][4]-=WO.consumables[k][4]
+                for k in WO.internal:
+                        self.consumables[k][4]-=WO.internal[k][4]
                 return True
         else:
                 return False
@@ -367,6 +369,12 @@ class Store(object):
                                     
                 else:
                         self.consumables[k][4]+=WO.consumables[k][4] ## Yes: increment quantity only
+        for k in WO.internal:
+                if True not in self.find_item(k,'PN'): ##check to see if each item is not in sohar cons dict
+                        self.consumables[k]=WO.internal[k].copy()##No: add new entry for this item
+                                    
+                else:
+                        self.consumables[k][4]+=WO.internal[k][4] ## Yes: increment quantity only
        
 
     def clear_ZQ(self): ## Done
@@ -1194,12 +1202,23 @@ class WO(Store):
                 else:
                         states.append(False)
                         items.append(self.consumables[k][0])
+
+         for k in WO.internal:
+                s,q,=sohar.find_item(k,'PN')
+                if s==True and q>=self.consumables[k][4]:
+                        states.append(s)
+                else:
+                        state.append(False)
+                        items.append(self.consumables[k][0])
+                        
         if set(states)=={True}: ##If all items are available thena all items in states is True
                                 ## Then converting to a set should have 1 True.
                 ##Return either true or false to reflect if WO is available or not.
                 return True,[]
         else:
                 return False,items #Return False and list of missing items
+
+       
     def reass_set(self, old_name, new_name,status, sohar,base):
         
         '''Reassign WO if it is booked or sent.'''
