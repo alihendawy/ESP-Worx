@@ -171,15 +171,15 @@ class Store(object):
                     
     def create_wo(self,name,base,sn_list,pn_list):
         name=name.upper()
-        pump400={'02025831': ['Coupling, ESP 17mm INV 15T x 17mm INV 15T LG:73.0mm Monel', '02025831', '1C487', None, 55], '02029183': ['Coupling, ESP 17mm INV 15T x 22mm INV 20T LG:73.0mm Monel', '02029183', '1C488', None, 47]}
-        pump500={'2031612': ['Coupling, ESP 17mm INV 15T x 25mm INV 24T LG: 73mm WN-311', '2031612', '1C489', None, 39], '02024923': ['Coupling, ESP 20mm INV 18T x 20mm INV 18T LG: 75mm CS', '02024923', '1C490', None, 4]}
+        pump400={'02025831': ['Coupling, ESP 17mm INV 15T x 17mm INV 15T LG:73.0mm Monel', '02025831', '1C487', None, 1], '02029183': ['Coupling, ESP 17mm INV 15T x 22mm INV 20T LG:73.0mm Monel', '02029183', '1C488', None, 47]}
+        pump500={'2031612': ['Coupling, ESP 17mm INV 15T x 25mm INV 24T LG: 73mm WN-311', '2031612', '1C489', None, 1], '02024923': ['Coupling, ESP 20mm INV 18T x 20mm INV 18T LG: 75mm CS', '02024923', '1C490', None, 1]}
         pump300={'a':16,'b':17}
         motor400={'c':22,'d':23}
-        motor500={'2000304#': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 461]}
+        motor500={'20003047': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 1]}
         motor300={'c':26,'d':27}
         seal300={'e':32,'f':33}
         seal400={'e':34,'f':35}
-        seal500={'20003047': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 10]}
+        seal500={'20003047': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 2]}
         splice={'719328': ['Tape, HI-TEMP sintered and extruded w/liner 1in x 18yds', '719328', '1C579', None, 2]}
         pumpused={}
         motorused={}
@@ -1208,7 +1208,7 @@ class WO(Store):
                 if s==True and q>=self.internal[k][4]:
                         states.append(s)
                 else:
-                        state.append(False)
+                        states.append(False)
                         items.append(self.consumables[k][0])
                         
         if set(states)=={True}: ##If all items are available thena all items in states is True
@@ -1428,13 +1428,10 @@ class WO(Store):
                 return 'Item already sent.'
 if __name__=='__main__':
         s=Store('sohar','config.ini')
-        print(s.consumables['719328'][4])
-        print(s.consumables['2031612'][4])
-        w=WO('WO11','config.ini')
-        s.Move_set(w,'now')
-        print(s.consumables['719328'][4])
-        print(s.consumables['2031612'][4])
-        
+       
+        print(s.pn2desc_map()['02027376'])
+        print(s.av_pn_map()['02027376'])
+        print(s.minStore_map['02027376'])
 
 
         
