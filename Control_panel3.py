@@ -53,15 +53,15 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.batch_action.triggered.connect(self.new_batch) ##OK
         self.reass_WO.triggered.connect(self.WO_reassign)##OK
         self.minstore_action.triggered.connect(self.MinStoreDlg)  ##OK
-        self.check_minstore.triggered.connect(self.minstore_check)  ##OK but found bug when non existent PN is inputted
+        self.check_minstore.triggered.connect(self.minstore_check)  ##OK
         self.reel_edit.clicked.connect(self.Edit_reel) ## OK
         self.exp_rep.clicked.connect(self.generate_rep) ##OK
         self.export_action.triggered.connect(self.generate_rep) ##OK
         self.update_orders.triggered.connect(self.orders_update)##OK
         self.difa_clear.triggered.connect(self.clearDIFA)##OK
-        self.return_cable.triggered.connect(self.cable_return)
-        self.actionClear_DIFA_cables.triggered.connect(self.clearDIFA_cables)
-        self.scrap.triggered.connect(self.scrap_cable)
+        self.return_cable.triggered.connect(self.cable_return) ##OK
+        self.actionClear_DIFA_cables.triggered.connect(self.clearDIFA_cables) ##OK
+        self.scrap.triggered.connect(self.scrap_cable)##OK
         
     def scrap_cable(self):
         form=scrapping()
@@ -1249,7 +1249,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.DH[r][i]))) ## Copy list items to table row
+
                     j+=1
                 
                 for i in range(len(header)):
@@ -1351,7 +1351,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         self.store_viewer.setItem(j,i, item)
                         
                         
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.consumables[r][i]))) ## Copy list items to table row
                     j+=1
                 for i in range(len(con_header)):
                     self.store_viewer.resizeColumnToContents(i)
@@ -1373,7 +1372,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 
                 for i in range(len(s_header)):
@@ -1382,7 +1380,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
 
             elif self.st_selector.currentText()=='Repair History': ## Repair history is selected
                 r_header=['Description','Part Number','1C Code','Serial Number','Quantity','Date In','Condition','Repair Date']
-##                self.store_viewer.setRowCount(len(self.sohar.rhistory))
                 self.store_viewer.setColumnCount(len(r_header))
                 self.store_viewer. setHorizontalHeaderLabels(r_header)
                 j=0
@@ -1396,7 +1393,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             else:
                                 pass
                             self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                         j+=1 ## increment col number
                 for i in range(len(r_header)):
                     self.store_viewer.resizeColumnToContents(i)
@@ -1418,7 +1414,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1
                 
                 for i in range(len(b_header)):
@@ -1440,7 +1435,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.used[r][i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 for i in range(len(b_header)):
                     self.store_viewer.resizeColumnToContents(i)
@@ -1459,7 +1453,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.sohar.used[r][i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 for i in range(len(difa_header)):
                     self.store_viewer.resizeColumnToContents(i)
@@ -1515,7 +1508,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         item.setTextAlignment(128 | 4)
                         
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i,QtWidgets.QTableWidgetItem(str(L[i]))) ## copy list items to table row
                     j+=1
                 for i in range(len(cab_header)):
                     self.store_viewer.resizeColumnToContents(i)
@@ -1552,7 +1544,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             item.setTextAlignment(128 | 4)
                         
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.WO.DH[r][i]))) ## copy list items to table row
                     j+=1 ## increment col number
                 
                 for r in self.WO.cables: ##Loop over WO.cables dict keys
@@ -1566,7 +1557,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         
                        
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.WO.cables[r][i]))) ## copy list items to table row
                     j+=1 ## increment row number
                     
                 if len(self.WO.rogue)>0:
@@ -1587,15 +1577,13 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
   
                 for r in self.WO.consumables: ##Loop over WO.consumables dict keys
                     for i in range(0,len(self.WO.consumables[r])): ## Loop over the list values for the given key
-##                        if i==2:
-##                            continue ## skip last entry
+
                         item=QtWidgets.QTableWidgetItem(str(self.WO.consumables[r][i]))
                         if i!=0:
                             item.setTextAlignment(128 | 4)
                         else:
                             pass
                         self.store_viewer.setItem(j,i, item)
-##                        self.store_viewer.setItem(j,i, QtWidgets.QTableWidgetItem(str(self.WO.consumables[r][i]))) ## copy list items to table row
                     item=QtWidgets.QTableWidgetItem(str(self.WO.consumables[r][4]))
                     item.setTextAlignment(128 | 4)
                     self.store_viewer.setItem(j,4,item ) ## Make last entry manually to qty col in table
