@@ -171,15 +171,16 @@ class Store(object):
                     
     def create_wo(self,name,base,sn_list,pn_list):
         name=name.upper()
-        pump400={'02025831': ['Coupling, ESP 17mm INV 15T x 17mm INV 15T LG:73.0mm Monel', '02025831', '1C487', None, 1], '02029183': ['Coupling, ESP 17mm INV 15T x 22mm INV 20T LG:73.0mm Monel', '02029183', '1C488', None, 47]}
-        pump500={'2031612': ['Coupling, ESP 17mm INV 15T x 25mm INV 24T LG: 73mm WN-311', '2031612', '1C489', None, 1], '02024923': ['Coupling, ESP 20mm INV 18T x 20mm INV 18T LG: 75mm CS', '02024923', '1C490', None, 1]}
-        pump300={'a':16,'b':17}
-        motor400={'c':22,'d':23}
-        motor500={'20003047': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 1]}
-        motor300={'c':26,'d':27}
-        seal300={'e':32,'f':33}
-        seal400={'e':34,'f':35}
-        seal500={'20003047': ['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '1C546', None, 2]}
+        motor400={'20003047':['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '403321', None, 3],
+                  '00808729':['O-ring, -235 WE610 (TFE/P 80 steam resistant) SAE AS568','808729','237130',None,1]}
+        motor500={'10031049': ['O-ring, 095-101-36-2-(AF-1100) GOST 9833/GOST 18829', '10031049', '425134', None, 1],
+                  '20003047':['O-Ring, 072-078-36-2-(AF-100) GOST 9833/GOST 18829', '20003047', '403321', None, 2],
+                  '10028451':['O-ring, 105-110-25-2-(AF-100) GOST 9833/GOST 18829', '10028451', '415020', None, 1],
+                  '00808729':['O-ring, -235 WE610 (TFE/P 80 steam resistant) SAE AS568','808729','237130',None,1]}
+        motor300={}
+        seal300={'02025831': ['Gasket, plug M10 x 1.0 Lead', '1288581', '117608', None, 8]}
+        seal400={'02025831': ['Gasket, plug M10 x 1.0 Lead', '1288581', '117608', None, 8]}
+        seal500={'02025831': ['Gasket, plug M10 x 1.0 Lead', '1288581', '117608', None, 8]}
         splice={'719328': ['Tape, HI-TEMP sintered and extruded w/liner 1in x 18yds', '719328', '1C579', None, 2]}
         pumpused={}
         motorused={}
@@ -211,7 +212,7 @@ class Store(object):
                 f=open(self.file,'w')
                 config.write(f)
                 f.close()
-                
+                return
         for s in sn_list:
                 if s[0] in self.DH and s[1]<=self.DH[s[0]][4]:
                         dh[s[0]]=self.DH[s[0]].copy()
@@ -234,18 +235,9 @@ class Store(object):
         
 
         for k in dh:
-                if 'Pump,' in dh[k][0]:
-                        pcount+=1
-                        if 'B 538' in dh[k][0]:
-                                pumpused=pump500
-                        elif 'B 400' in dh[k][0]:
-                                pumpused=pump400
-                        elif '338' in dh[k][0]:
-                                pumpused=pump300
-                        else:
-                                pumpused={}
+
                         
-                elif 'Motor,' in dh[k][0]:
+                if 'Motor,' in dh[k][0]:
                         mcount+=1
                         if 'B 562' in dh[k][0]:
                                 motorused=motor500
@@ -265,16 +257,16 @@ class Store(object):
                                 sealused=seal300
                         else:
                                 sealused={}                       
-        for k in pumpused:
-                pumpused[k][4]*=pcount
+
         for k in motorused:
                 motorused[k][4]*=mcount
         for k in sealused:
                 sealused[k][4]*=scount
-        internal.update(pumpused)
         internal.update(motorused)
         internal.update(sealused)
         if len(cables)>0:
+                for k in splice:
+                        splice[k][4]*=len(cables)
                 internal.update(splice)
                  
         
@@ -293,7 +285,15 @@ class Store(object):
         f=open(self.file,'w')
         config.write(f)
         f.close()
-        return [pumpused,motorused,sealused,splice]
+        x=[]
+        if mcount>0:
+                x.append(motorused)
+        if scount>0:
+                x.append(sealused)
+        if len(cables)>0:
+                x.append(splice)
+        
+        return x
         
     def get_wos(self):
         config=cp.ConfigParser()
@@ -1428,10 +1428,9 @@ class WO(Store):
                 return 'Item already sent.'
 if __name__=='__main__':
         s=Store('sohar','config.ini')
-       
-        print(s.pn2desc_map()['02027376'])
-        print(s.av_pn_map()['02027376'])
-        print(s.minStore_map['02027376'])
+        w=WO('ALI1','config.ini')
+        a=w.is_avail(s)
+        
 
 
         

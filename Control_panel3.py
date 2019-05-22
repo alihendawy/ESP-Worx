@@ -34,11 +34,11 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.status=self.statusBar()
         self.status.showMessage("Load Workorder")
         self.load_inv()
+        
         self.create_wo.clicked.connect(self.wo_creation) ##OK
         self.save_action.triggered.connect(self.save_progress) ##OK
         self.saveas_action.triggered.connect(self.backup_store) ##OK
         self.st_selector.currentTextChanged.connect(self.tabView) ##OK Action for selecting from drop down menu
-    
         self.open_store.triggered.connect(self.foo)
         self.load_wo.clicked.connect(self.wo_load) ## OK Action for clicking Load WO Button
         self.open_WO.triggered.connect(self.wo_load) ##OK
@@ -982,7 +982,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 for e in repTool.sp_list:
                     cons[e[0]]=self.sohar.consumables[e[0]].copy()
                     cons[e[0]][4]=e[1]
-                self.generate_TN(date=repTool.rep_date.text(),base='',well='',dh={},cables={},cons=cons,job=repTool.jobno.text())##bbboy
+                self.generate_TN(date=repTool.rep_date.text(),base='',well='',dh={repTool.sn_input.text():self.sohar.DH[repTool.sn_input.text()].copy()},cables={},cons=cons,job=repTool.jobno.text())##bbboy
                 self.load_histories()
                 self.tabView()
         except:
@@ -996,7 +996,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         
 
         
-        try:##findme4
+        try:
             inter=self.sohar.create_wo(woTool.well_name,woTool.base_name,woTool.sn_list,woTool.pn_list)
             msgBox = QtWidgets.QMessageBox()
             msgBox.setIcon(QtWidgets.QMessageBox.Information)
@@ -1004,8 +1004,40 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             msgBox.setWindowTitle("Success")
             msgBox.setText("Workorder created successfully.")
             msgBox.exec_()
-            for i in inter:
-                self.generate_TN(date=datetime.datetime.today().strftime('%d-%b-%Y'),base=woTool.base_name,well=woTool.well_name,dh={},cables={},cons=i,job='internal')
+            motor={}
+            seal={}
+            cable={}
+            x=[]
+
+            for s in woTool.sn_list:
+                if s[0] in self.sohar.DH:
+                    if 'Motor,' in self.sohar.DH[s[0]][0]:
+                        motor[s[0]]=self.sohar.DH[s[0]].copy()
+                       
+                    elif 'Motor Seal,' in self.sohar.DH[s[0]][0]:
+                        seal[s[0]]=self.sohar.DH[s[0]].copy()
+                        
+                elif s[0] in self.sohar.cables:
+                    w=Store_ManagerV09.WO(woTool.well_name,'config.ini')
+                    cable=w.cables
+            try:
+                motor
+                x.append(motor)
+            except NameError:
+                pass
+            try:
+                seal
+                x.append(seal)
+            except NameError:
+                pass
+            try:
+                cable
+                x.append(cable)
+            except NameError:
+                pass
+            print(x)      
+            for i,e in zip(inter,x):
+                self.generate_TN(date=datetime.datetime.today().strftime('%d-%b-%Y'),base=woTool.base_name,well=woTool.well_name,dh=e,cables={},cons=i,job='internal')
             
         except:
             pass
