@@ -39,7 +39,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         self.save_action.triggered.connect(self.save_progress) ##OK
         self.saveas_action.triggered.connect(self.backup_store) ##OK
         self.st_selector.currentTextChanged.connect(self.tabView) ##OK Action for selecting from drop down menu
-        self.open_store.triggered.connect(self.foo)
         self.load_wo.clicked.connect(self.wo_load) ## OK Action for clicking Load WO Button
         self.open_WO.triggered.connect(self.wo_load) ##OK
         self.search_store.returnPressed.connect(self.filter)
@@ -76,14 +75,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if flag==True:
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Success")
                 msg.setText("Cable added to scrap.")
                 msg.exec_()
             else:
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
                 msg.setWindowTitle("Warning")
                 msg.setText("Quantity on Reel is insufficient. Please check again.")
                 msg.exec_()
@@ -130,7 +129,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if '' in d or w =='':
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
                         msg.setWindowTitle("Error")
                         msg.setText("Please fill all required cells for each reel.")
                         msg.exec_()
@@ -160,7 +159,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.tabView()
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText("Equipment cleared from DIFA.")
             msg.exec_()
@@ -174,7 +173,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.tabView()
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText("Orders updated successfully.")
             msg.exec_()
@@ -189,15 +188,6 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.WO=Store_ManagerV09.WO(str(name),self.sohar.file)
             self.tabView()
             
-    def foo(self):
-        term=self.search_store.text()
-        for i in range(self.store_viewer.rowCount()):
-            match=False
-            item=self.store_viewer.item(i,9)
-            if term in item.text():
-                match=True
-                
-            self.store_viewer.setRowHidden(i,not match)
         
     def generate_rep(self):
         try:
@@ -213,7 +203,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.sohar.generate_report(f)
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText("Report generated successfully.")
             msg.exec_()
@@ -229,7 +219,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if a==False:
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Warning")
                 msg.setText("Insufficient Cable length.")
                 msg.exec_()
@@ -251,6 +241,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                             accum.append((pn,qty,'Close to minimum'))
                         elif (qty-self.sohar.minStore_map[pn])==0 or (qty-self.sohar.minStore_map[pn])<0:
                             accum.append((pn,qty,'Below/at minimum'))
+                        
                 minstoreView=MinStore_Dlg3()
                 minstoreView.table.setHorizontalHeaderLabels(['Part Number','QTY','Status'])
                 minstoreView.table.setSortingEnabled(False)
@@ -269,33 +260,42 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         
             else:
                 pn=minstore.lineEdit.text()
-                qty1=pn_map[pn]
-                qty2=self.sohar.minStore_map[pn]
-                qty=qty1-qty2
-                if qty>0 and qty<=int(0.1*qty2):
-                    ##raise warning
-                    msg=QtWidgets.QMessageBox()
-                    msg.setIcon(QtWidgets.QMessageBox.Warning)
-                    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
-                    msg.setWindowTitle("Warning")
-                    msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". It is close to min quantity. Please monitor closely.")
-                    msg.exec_()
-                elif qty==0 or qty<0:
-                    ##Raise critical alarm
+                if pn in pn_map and pn in self.sohar.minStore_map:
+                    qty1=pn_map[pn]
+                    qty2=self.sohar.minStore_map[pn]
+                    qty=qty1-qty2
+                    if qty>0 and qty<=int(0.1*qty2):
+                        ##raise warning
+                        msg=QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Warning)
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowTitle("Warning")
+                        msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". It is close to min quantity. Please monitor closely.")
+                        msg.exec_()
+                    elif qty==0 or qty<0:
+                        ##Raise critical alarm
+                        msg=QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Critical)
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowTitle("Error")
+                        msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Please order as soon as possible.")
+                        msg.exec_()
+                    elif qty>int(0.1*qty2):
+                        ## Satisfactory levels
+                        msg=QtWidgets.QMessageBox()
+                        msg.setIcon(QtWidgets.QMessageBox.Information)
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowTitle("Min Store Check")
+                        msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Store levels are good.")
+                        msg.exec_()
+                else:
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Critical)
-                    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
                     msg.setWindowTitle("Error")
-                    msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Please order as soon as possible.")
+                    msg.setText("Invalid Part Number. Please check it again.")
                     msg.exec_()
-                elif qty>int(0.1*qty2):
-                    ## Satisfactory levels
-                    msg=QtWidgets.QMessageBox()
-                    msg.setIcon(QtWidgets.QMessageBox.Information)
-                    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
-                    msg.setWindowTitle("Min Store Check")
-                    msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Store levels are good.")
-                    msg.exec_()
+                    
             
         else:
             del(minstore)
@@ -327,7 +327,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
             msg.setWindowTitle("Warning")
             msg.setText("Please load Sohar inventory file.")
             msg.exec_()
@@ -342,7 +342,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
             msg.setWindowTitle("Error")
             msg.setText("Please load workorder file first.")
             msg.exec_()
@@ -369,14 +369,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if len(check)==0:
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Information)
-                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
                         msg.setWindowTitle("Success")
                         msg.setText("New Equipment Batch added to Sohar Store.")
                         msg.exec_()
                     else:
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Warning)
-                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
                         msg.setWindowTitle("Warning")
                         msg.setText("Some items were already found in Sohar Store.\nWould you like to see a list of SN?")
                         msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -384,7 +384,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         if res ==QtWidgets.QMessageBox.Yes:
                             msg2=QtWidgets.QMessageBox()
                             msg2.setIcon(QtWidgets.QMessageBox.Information)
-                            msg2.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                            msg2.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                             msg2.setWindowTitle("List of Items")   
                             msg2.setText(str(check))
                             msg2.exec_()
@@ -394,7 +394,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 except:
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Critical)
-                    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msg.setWindowTitle("Error")
                     msg.setText("Please load Sohar Inventory file.")
                     msg.exec_()
@@ -402,7 +402,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             elif batch.result()==1 and batch.batchFile.text()=='':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Warning")
                 msg.setText("Please select Equipment Batch file.")
                 msg.exec_()
@@ -445,7 +445,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         state=True
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Error")
                         msg.setText("Please fill all cells in the return dialog.")
                         msg.exec_()
@@ -533,7 +533,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     state=False
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Warning)
-                    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msg.setWindowTitle("Warning")
                     msg.setText("Please enter date of sending.")
                     msg.exec_()
@@ -543,14 +543,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         if flag=='Already sent':
                             msg=QtWidgets.QMessageBox()
                             msg.setIcon(QtWidgets.QMessageBox.Critical)
-                            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                             msg.setWindowTitle("Error")
                             msg.setText(self.WO.get_name()+" already sent to field.")
                             msg.exec_()
                         else:
                             msg=QtWidgets.QMessageBox()
                             msg.setIcon(QtWidgets.QMessageBox.Information)
-                            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                             msg.setWindowTitle("Success")
                             msg.setText(self.WO.get_name()+" was sent successfully.")
                             msg.exec_()
@@ -561,7 +561,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     except:
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Error")
                         msg.setText("Please load inventory or WO files.")
                         msg.exec_()
@@ -576,7 +576,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         try:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Unbook Set")
             msg.setText("Do you want to unbook "+self.WO.get_name()+" set?")
             msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -584,7 +584,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Warning")
             msg.setText("Please load Workorder file.")
             msg.exec_()
@@ -594,7 +594,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             self.WO.unbook_set(self.sohar)
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText(self.WO.get_name()+" set is unbooked.")
             msg.exec_()
@@ -609,7 +609,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         try:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Book Set")
             msg.setText("Do you want to book "+self.WO.get_name()+" set?")
             msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -617,7 +617,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Warning")
             msg.setText("Please load Workorder file.")
             msg.exec_()
@@ -628,14 +628,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if flag=='Not Available':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Error")
                 msg.setText("One or more items in "+self.WO.get_name()+" are not available in Sohar store.")
                 msg.exec_()
                 return
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText(self.WO.get_name()+" set booked.")
             msg.exec_()
@@ -658,35 +658,35 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if flag=='Invalid data.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Incorrect data format")
                         msgBox.exec_()
                     elif flag=='Item not in ':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was not found in workorder "+self.WO.get_name())
                         msgBox.exec_()
                     elif flag=='Item already in Sohar':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
                     elif flag=='Item already sent.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
                         msgBox.exec_()
                     elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
@@ -703,35 +703,35 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if flag=='Invalid data.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Incorrect data format")
                         msgBox.exec_()
                     elif flag=='Item not in ':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was not found in workorder "+self.WO.get_name())
                         msgBox.exec_()
                     elif flag=='Item already in Sohar':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                         msgBox.exec_()
                     elif flag=='Item already sent.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
                         msgBox.exec_()
                     elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
@@ -739,7 +739,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 else:
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item not in Workorder.")
                     msgBox.exec_()
@@ -755,42 +755,42 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 if flag=='Invalid data.':
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Incorrect data format")
                     msgBox.exec_()
                 elif flag=='Item not in ':
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item was not found in workorder "+self.WO.get_name())
                     msgBox.exec_()
                 elif flag=='Item already in Sohar':
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item is already in Sohar store. It was removed from workorder before.")
                     msgBox.exec_()
                 elif flag=='Item already sent.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item was already sent to field. You can return it instead.")
                         msgBox.exec_()
                 elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
             else:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Warning")
                 msgBox.setText("Please select ID type (SN/PN).")
                 msgBox.exec_()
@@ -813,21 +813,21 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if flag=='Incorrect data format.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Incorrect data format")
                         msgBox.exec_()
                     elif flag=='Item not in store.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
                         msgBox.exec_()
                     elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
@@ -842,28 +842,28 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if flag=='Incorrect data format.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Incorrect data format")
                         msgBox.exec_()
                     elif flag=='Item not in store.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
                         msgBox.exec_()
                     elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
                 else:
                     msgBox=QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Error")
                     msgBox.setText("Item is not available in Sohar Store.")
                     msgBox.exec_()
@@ -877,21 +877,21 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 if flag=='Incorrect data format.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Incorrect data format")
                         msgBox.exec_()
                 elif flag=='Item not in store.':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Item is not available in Sohar Store.")
                         msgBox.exec_()
                 elif flag=='set booked':
                         msgBox=QtWidgets.QMessageBox()
                         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                        msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                        msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msgBox.setWindowTitle("Error")
                         msgBox.setText("Set is already booked. Unbook set first to add items to it.")
                         msgBox.exec_()
@@ -899,7 +899,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Warning")
                 msgBox.setText("Please select ID type (SN/PN).")
                 msgBox.exec_()
@@ -916,14 +916,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if a==True:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Information)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Success")
                 msgBox.setText(f"Item with PN: {valid.pn_input.text()} has a valid count. Incoming: {b[0]}, Available: {b[1]}, Booked: {b[3]}, Sent: {b[4]} and Used: {b[2]}.")
                 msgBox.exec_()
             else:
                 msgBox=QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Error")
                 msgBox.setText(f"Item with PN: {valid.pn_input.text()} does not have a valid count. Incoming: {b[0]}, Available: {b[1]}, Booked: {b[3]}, Sent: {b[4]} and Used: {b[2]}.")
                 msgBox.exec_()
@@ -941,7 +941,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if len(repTool.sp_list)==0:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Warning")
                 msgBox.setText("No spare parts selected for the repair.\n Are you sure you want to proceed?")
                 msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -951,7 +951,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 else:
                     msgBox = QtWidgets.QMessageBox()
                     msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                    msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                    msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msgBox.setWindowTitle("Warning")
                     msgBox.setText("Item repair is suspended")
                     msgBox.exec_()
@@ -960,21 +960,21 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if a=='Insufficient':
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Error")
                 msgBox.setText("Insufficient quantity from spare part with PN: "+b)
                 msgBox.exec_()
             elif a=='Itemnot':
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Error")
                 msgBox.setText("Item not found in used store.")
                 msgBox.exec_()
             else:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Information)
-                msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msgBox.setWindowTitle("Success")
                 msgBox.setText("Item repaired successfully.")
                 msgBox.exec_()
@@ -1000,7 +1000,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             inter=self.sohar.create_wo(woTool.well_name,woTool.base_name,woTool.sn_list,woTool.pn_list)
             msgBox = QtWidgets.QMessageBox()
             msgBox.setIcon(QtWidgets.QMessageBox.Information)
-            msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msgBox.setWindowTitle("Success")
             msgBox.setText("Workorder created successfully.")
             msgBox.exec_()
@@ -1055,7 +1055,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except: ## If no file is selected from dialog (user closed dialog), then do nothing.
             msgBox = QtWidgets.QMessageBox()
             msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-            msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msgBox.setWindowTitle("Error")
             msgBox.setText("Configuration file missing!")
             msgBox.exec_()
@@ -1069,7 +1069,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             shutil.copyfile(self.sohar.file,f+'.ini')
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText("Progress Saved.")
             msg.exec_()
@@ -1084,7 +1084,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                 pass
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Success")
             msg.setText("Progress Saved.")
             msg.exec_()
@@ -1127,7 +1127,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if IDtype!='Serial Number':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Warning")
                 msg.setText("Search not allowed, you can only search by SN in this view.")
                 msg.exec_()
@@ -1150,7 +1150,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             if IDtype=='1C Code' or IDtype=='Serial Number':
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Warning")
                 msg.setText("You cannot search by 1C or SN in Min Store view.")
                 msg.exec_()
@@ -1633,7 +1633,7 @@ class Repair_dlg(QtWidgets.QDialog,repair_form.Ui_Dialog):
         else:
             msgBox = QtWidgets.QMessageBox()
             msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msgBox.setWindowTitle("Warning")
             msgBox.setText("Please enter repair date.")
             msgBox.exec_()
@@ -1693,7 +1693,7 @@ class WO_creator(QtWidgets.QDialog,wo_creator.Ui_Dialog):
         else:
             msgBox = QtWidgets.QMessageBox()
             msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgBox.setWindowIcon(QtGui.QIcon('icon2.ico'))
+            msgBox.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msgBox.setWindowTitle("Warning")
             msgBox.setText("Please enter well name.")
             msgBox.exec_()
@@ -1763,7 +1763,7 @@ class MinStore_Dlg(QtWidgets.QDialog,minStore_dlg.Ui_Dialog):
             if False in state:
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
-                msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Error")
                 msg.setText("Part Number already entered. Please check again.")
                 msg.exec_()
@@ -1859,7 +1859,7 @@ class Returning_cable(QtWidgets.QDialog,Return_cable.Ui_Dialog):
         if sn in self.check:
              msg=QtWidgets.QMessageBox()
              msg.setIcon(QtWidgets.QMessageBox.Critical)
-             msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+             msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
              msg.setWindowTitle("Error")
              msg.setText("Item already in return list.")
              msg.exec_()
@@ -1987,7 +1987,7 @@ class Returning_set(QtWidgets.QDialog,return_wo.Ui_Dialog):
         if data in self.check:
              msg=QtWidgets.QMessageBox()
              msg.setIcon(QtWidgets.QMessageBox.Critical)
-             msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+             msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
              msg.setWindowTitle("Error")
              msg.setText("Item already in return list.")
              msg.exec_()
@@ -2103,7 +2103,7 @@ class Clearing_difa(QtWidgets.QDialog,clear_difa.Ui_Dialog):
         if data in self.check:
              msg=QtWidgets.QMessageBox()
              msg.setIcon(QtWidgets.QMessageBox.Critical)
-             msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+             msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
              msg.setWindowTitle("Error")
              msg.setText("Item already in return list.")
              msg.exec_()
@@ -2223,7 +2223,7 @@ if lic.isExpired():
     app=QtWidgets.QApplication([])
     msg=QtWidgets.QMessageBox()
     msg.setIcon(QtWidgets.QMessageBox.Critical)
-    msg.setWindowIcon(QtGui.QIcon('icon2.ico'))
+    msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
     msg.setWindowTitle("Error")
     msg.setText("Internal maintenance needed.")
     msg.exec_()
