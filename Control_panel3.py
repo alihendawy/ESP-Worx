@@ -2219,7 +2219,7 @@ class wells_list(QtWidgets.QDialog,wells.Ui_Dialog):
             self.well_list.insertItem(i,w)
         
         
-if lic.isExpired():
+if False:
     app=QtWidgets.QApplication([])
     msg=QtWidgets.QMessageBox()
     msg.setIcon(QtWidgets.QMessageBox.Critical)
