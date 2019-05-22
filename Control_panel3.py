@@ -82,7 +82,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
             else:
                 msg=QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                 msg.setWindowTitle("Warning")
                 msg.setText("Quantity on Reel is insufficient. Please check again.")
                 msg.exec_()
@@ -129,7 +129,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if '' in d or w =='':
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Error")
                         msg.setText("Please fill all required cells for each reel.")
                         msg.exec_()
@@ -268,7 +268,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         ##raise warning
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Warning)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Warning")
                         msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". It is close to min quantity. Please monitor closely.")
                         msg.exec_()
@@ -276,7 +276,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         ##Raise critical alarm
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Critical)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Error")
                         msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Please order as soon as possible.")
                         msg.exec_()
@@ -284,14 +284,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                         ## Satisfactory levels
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Information)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Min Store Check")
                         msg.setText("Min store quantity is "+str(qty2)+" and actual quantity is "+str(qty1)+". Store levels are good.")
                         msg.exec_()
                 else:
                     msg=QtWidgets.QMessageBox()
                     msg.setIcon(QtWidgets.QMessageBox.Critical)
-                    msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                    msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                     msg.setWindowTitle("Error")
                     msg.setText("Invalid Part Number. Please check it again.")
                     msg.exec_()
@@ -327,7 +327,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Warning")
             msg.setText("Please load Sohar inventory file.")
             msg.exec_()
@@ -342,7 +342,7 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
         except:
             msg=QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+            msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
             msg.setWindowTitle("Error")
             msg.setText("Please load workorder file first.")
             msg.exec_()
@@ -369,14 +369,14 @@ class Dashboard(QtWidgets.QMainWindow,Main.Ui_MainWindow):
                     if len(check)==0:
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Information)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Success")
                         msg.setText("New Equipment Batch added to Sohar Store.")
                         msg.exec_()
                     else:
                         msg=QtWidgets.QMessageBox()
                         msg.setIcon(QtWidgets.QMessageBox.Warning)
-                        msg.setWindowIcon(QtGui.QIcon(''newIcon.ico''))
+                        msg.setWindowIcon(QtGui.QIcon('newIcon.ico'))
                         msg.setWindowTitle("Warning")
                         msg.setText("Some items were already found in Sohar Store.\nWould you like to see a list of SN?")
                         msg.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
